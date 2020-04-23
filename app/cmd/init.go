@@ -17,10 +17,10 @@ package cmd
 
 import (
 	"errors"
-	"github.com/howeyc/gopass"
 	"github.com/BASChain/go-bas-mail-server/app/cmdcommon"
 	"github.com/BASChain/go-bas-mail-server/config"
 	"github.com/BASChain/go-bas-mail-server/rsakey"
+	"github.com/howeyc/gopass"
 	"github.com/spf13/cobra"
 	"log"
 	"os"

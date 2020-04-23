@@ -49,7 +49,6 @@ func (bc *BMSConfig) Load() *BMSConfig {
 		return nil
 	}
 
-
 	err = json.Unmarshal(jbytes, bc)
 	if err != nil {
 		log.Println("load configuration unmarshal failed", err)
