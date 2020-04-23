@@ -54,8 +54,8 @@ func inputChoose() (choose string, err error) {
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "init ssc",
-	Long:  `init ssc`,
+	Short: "init bms",
+	Long:  `init bms`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var err error
 
@@ -67,7 +67,7 @@ var initCmd = &cobra.Command{
 
 		InitCfg()
 
-		if rsakey.KeyGenerated(config.GetBMCCfg().GetKeyPath()) {
+		if rsakey.KeyGenerated(config.GetBMSCfg().GetKeyPath()) {
 			var choose string
 			if choose, err = inputChoose(); err != nil {
 				log.Println(err)
@@ -100,12 +100,12 @@ var initCmd = &cobra.Command{
 			panic("Generate rsa key pair failed")
 		}
 
-		cfg := config.GetBMCCfg()
+		cfg := config.GetBMSCfg()
 		cfg.RemoteServer = remoteserver
 
 		cfg.Save()
 
-		s58 := rsakey.PubKey2Addr(config.GetBMCCfg().PubKey)
+		s58 := rsakey.PubKey2Addr(config.GetBMSCfg().PubKey)
 
 		log.Println("Init success!, Public key: ", s58)
 	},
@@ -114,7 +114,7 @@ var initCmd = &cobra.Command{
 func genRsaKey(password string) error {
 	priv, _ := rsakey.GenerateKeyPair(2048)
 
-	cfg := config.GetBMCCfg()
+	cfg := config.GetBMSCfg()
 
 	err := rsakey.Save2File(cfg.GetKeyPath(), priv, password)
 	if err != nil {

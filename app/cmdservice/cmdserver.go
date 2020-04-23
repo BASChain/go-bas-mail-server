@@ -35,7 +35,7 @@ func GetCmdServerInst() CmdServerInter {
 		cmdServerInstLock.Lock()
 		defer cmdServerInstLock.Unlock()
 		if cmdServerInst == nil {
-			cfg := config.GetBMCCfg()
+			cfg := config.GetBMSCfg()
 			cmdServerInst = &cmdServer{localaddr: cfg.CmdListenPort}
 		}
 	}
@@ -74,7 +74,7 @@ func (cs *cmdServer) StartCmdService() {
 }
 
 func (cs *cmdServer) StopCmdService() {
-	config.GetBMCCfg().Save()
+	config.GetBMSCfg().Save()
 	//server.DNSServerStop()
 	//dohserver.GetDohDaemonServer().ShutDown()
 	//mem.MemStateStop()

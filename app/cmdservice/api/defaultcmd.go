@@ -57,7 +57,7 @@ func encapResp(msg string) *cmdpb.DefaultResp {
 }
 
 func (cds *CmdDefaultServer) configShow() (*cmdpb.DefaultResp, error) {
-	cfg := config.GetBMCCfg()
+	cfg := config.GetBMSCfg()
 
 	bapc, err := json.MarshalIndent(*cfg, "", "\t")
 	if err != nil {
@@ -68,7 +68,7 @@ func (cds *CmdDefaultServer) configShow() (*cmdpb.DefaultResp, error) {
 }
 
 func (cds *CmdDefaultServer) pkshow() (*cmdpb.DefaultResp, error) {
-	cfg := config.GetBMCCfg()
+	cfg := config.GetBMSCfg()
 
 	return encapResp(cfg.PKAddr), nil
 }

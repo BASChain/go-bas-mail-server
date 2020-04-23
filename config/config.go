@@ -11,11 +11,11 @@ import (
 )
 
 const (
-	BMC_HomeDir      = ".bmc"
-	BMC_CFG_FileName = "bmc.json"
+	BMS_HomeDir      = ".bms"
+	BMS_CFG_FileName = "bms.json"
 )
 
-type BMCConfig struct {
+type BMSConfig struct {
 	MgtHttpPort   int             `json:"mgthttpport"`
 	KeyPath       string          `json:"keypath"`
 	CmdListenPort string          `json:"cmdlistenport"`
@@ -26,11 +26,11 @@ type BMCConfig struct {
 }
 
 var (
-	bmccfgInst     *BMCConfig
-	bmccfgInstLock sync.Mutex
+	bmscfgInst     *BMSConfig
+	bmscfgInstLock sync.Mutex
 )
 
-func (bc *BMCConfig) InitCfg() *BMCConfig {
+func (bc *BMSConfig) InitCfg() *BMSConfig {
 	bc.MgtHttpPort = 50818
 	bc.KeyPath = "/keystore"
 	bc.CmdListenPort = "127.0.0.1:59527"
@@ -38,12 +38,12 @@ func (bc *BMCConfig) InitCfg() *BMCConfig {
 	return bc
 }
 
-func (bc *BMCConfig) Load() *BMCConfig {
-	if !tools.FileExists(GetBMCCFGFile()) {
+func (bc *BMSConfig) Load() *BMSConfig {
+	if !tools.FileExists(GetBMSCFGFile()) {
 		return nil
 	}
 
-	jbytes, err := tools.OpenAndReadAll(GetBMCCFGFile())
+	jbytes, err := tools.OpenAndReadAll(GetBMSCFGFile())
 	if err != nil {
 		log.Println("load file failed", err)
 		return nil
@@ -60,35 +60,35 @@ func (bc *BMCConfig) Load() *BMCConfig {
 
 }
 
-func newSSCCfg() *BMCConfig {
+func newBMSCfg() *BMSConfig {
 
-	bc := &BMCConfig{}
+	bc := &BMSConfig{}
 
 	bc.InitCfg()
 
 	return bc
 }
 
-func GetBMCCfg() *BMCConfig {
-	if bmccfgInst == nil {
-		bmccfgInstLock.Lock()
-		defer bmccfgInstLock.Unlock()
-		if bmccfgInst == nil {
-			bmccfgInst = newSSCCfg()
+func GetBMSCfg() *BMSConfig {
+	if bmscfgInst == nil {
+		bmscfgInstLock.Lock()
+		defer bmscfgInstLock.Unlock()
+		if bmscfgInst == nil {
+			bmscfgInst = newBMSCfg()
 		}
 	}
 
-	return bmccfgInst
+	return bmscfgInst
 }
 
-func PreLoad() *BMCConfig {
-	bc := &BMCConfig{}
+func PreLoad() *BMSConfig {
+	bc := &BMSConfig{}
 
 	return bc.Load()
 }
 
-func LoadFromCfgFile(file string) *BMCConfig {
-	bc := &BMCConfig{}
+func LoadFromCfgFile(file string) *BMSConfig {
+	bc := &BMSConfig{}
 
 	bc.InitCfg()
 
@@ -104,56 +104,56 @@ func LoadFromCfgFile(file string) *BMCConfig {
 		return nil
 	}
 
-	bmccfgInstLock.Lock()
-	defer bmccfgInstLock.Unlock()
-	bmccfgInst = bc
+	bmscfgInstLock.Lock()
+	defer bmscfgInstLock.Unlock()
+	bmscfgInst = bc
 
 	return bc
 
 }
 
-func LoadFromCmd(initfromcmd func(cmdbc *BMCConfig) *BMCConfig) *BMCConfig {
-	bmccfgInstLock.Lock()
-	defer bmccfgInstLock.Unlock()
+func LoadFromCmd(initfromcmd func(cmdbc *BMSConfig) *BMSConfig) *BMSConfig {
+	bmscfgInstLock.Lock()
+	defer bmscfgInstLock.Unlock()
 
-	lbc := newSSCCfg().Load()
+	lbc := newBMSCfg().Load()
 
 	if lbc != nil {
-		bmccfgInst = lbc
+		bmscfgInst = lbc
 	} else {
-		lbc = newSSCCfg()
+		lbc = newBMSCfg()
 	}
 
-	bmccfgInst = initfromcmd(lbc)
+	bmscfgInst = initfromcmd(lbc)
 
-	return bmccfgInst
+	return bmscfgInst
 }
 
-func GetBMCHomeDir() string {
+func GetBMSHomeDir() string {
 	curHome, err := tools.Home()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return path.Join(curHome, BMC_HomeDir)
+	return path.Join(curHome, BMS_HomeDir)
 }
 
-func GetBMCCFGFile() string {
-	return path.Join(GetBMCHomeDir(), BMC_CFG_FileName)
+func GetBMSCFGFile() string {
+	return path.Join(GetBMSHomeDir(), BMS_CFG_FileName)
 }
 
-func (bc *BMCConfig) Save() {
+func (bc *BMSConfig) Save() {
 	jbytes, err := json.MarshalIndent(*bc, " ", "\t")
 
 	if err != nil {
 		log.Println("Save BASD Configuration json marshal failed", err)
 	}
 
-	if !tools.FileExists(GetBMCHomeDir()) {
-		os.MkdirAll(GetBMCHomeDir(), 0755)
+	if !tools.FileExists(GetBMSHomeDir()) {
+		os.MkdirAll(GetBMSHomeDir(), 0755)
 	}
 
-	err = tools.Save2File(jbytes, GetBMCCFGFile())
+	err = tools.Save2File(jbytes, GetBMSCFGFile())
 	if err != nil {
 		log.Println("Save BASD Configuration to file failed", err)
 	}
@@ -161,29 +161,29 @@ func (bc *BMCConfig) Save() {
 }
 
 func IsInitialized() bool {
-	if tools.FileExists(GetBMCCFGFile()) {
+	if tools.FileExists(GetBMSCFGFile()) {
 		return true
 	}
 
 	return false
 }
 
-func (bc *BMCConfig) GetKeyPath() string {
-	return path.Join(GetBMCHomeDir(), bc.KeyPath)
+func (bc *BMSConfig) GetKeyPath() string {
+	return path.Join(GetBMSHomeDir(), bc.KeyPath)
 
 }
 
-func (bc *BMCConfig) SetPrivKey(priv *rsa.PrivateKey) {
+func (bc *BMSConfig) SetPrivKey(priv *rsa.PrivateKey) {
 	bc.PrivKey = priv
 }
 
-func (bc *BMCConfig) SetPubKey(pub *rsa.PublicKey) {
+func (bc *BMSConfig) SetPubKey(pub *rsa.PublicKey) {
 	bc.PubKey = pub
 }
-func (bc *BMCConfig) GetPrivKey() (priv *rsa.PrivateKey) {
+func (bc *BMSConfig) GetPrivKey() (priv *rsa.PrivateKey) {
 	return bc.PrivKey
 }
 
-func (bc *BMCConfig) GetPubKey() (pub *rsa.PublicKey) {
+func (bc *BMSConfig) GetPubKey() (pub *rsa.PublicKey) {
 	return bc.PubKey
 }

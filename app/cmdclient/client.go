@@ -34,7 +34,7 @@ func NewCmdClient(addr string) *CmdClient {
 func (cc *CmdClient) DialToCmdServer() *CmdConnection {
 
 	if cc.addr == "" {
-		cfg := config.GetBMCCfg()
+		cfg := config.GetBMSCfg()
 		cc.addr = cfg.CmdListenPort
 	}
 

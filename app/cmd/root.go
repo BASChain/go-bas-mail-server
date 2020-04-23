@@ -35,9 +35,9 @@ var (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "ssc",
-	Short: "start ssc in current shell",
-	Long:  `start ssc in current shell`,
+	Use:   "bms",
+	Short: "start bms in current shell",
+	Long:  `start bms in current shell`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		_, err := cmdcommon.IsProcessCanStarted()
@@ -47,7 +47,7 @@ var rootCmd = &cobra.Command{
 		}
 
 		InitCfg()
-		cfg := config.GetBMCCfg()
+		cfg := config.GetBMSCfg()
 		cfg.Save()
 
 		if keypassword == "" {
@@ -117,7 +117,7 @@ func InitCfg() {
 //
 //}
 
-func cfginit(bc *config.BMCConfig) *config.BMCConfig {
+func cfginit(bc *config.BMSConfig) *config.BMSConfig {
 	cfg := bc
 	//if cmdrootudpport > 0 && cmdrootudpport < 65535 {
 	//	cfg.UpdPort = cmdrootudpport

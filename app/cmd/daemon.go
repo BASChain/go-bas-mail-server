@@ -32,8 +32,8 @@ import (
 // daemonCmd represents the daemon command
 var daemonCmd = &cobra.Command{
 	Use:   "daemon",
-	Short: "ssc start in backend",
-	Long:  `ssc start in backend`,
+	Short: "bms start in backend",
+	Long:  `bms start in backend`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		_, err := cmdcommon.IsProcessCanStarted()
@@ -43,7 +43,7 @@ var daemonCmd = &cobra.Command{
 		}
 
 		InitCfg()
-		cfg := config.GetBMCCfg()
+		cfg := config.GetBMSCfg()
 		cfg.Save()
 		//if keypassword == ""{
 		//	if keypassword, err = inputpassword(); err != nil {
@@ -66,11 +66,11 @@ var daemonCmd = &cobra.Command{
 			cfg.PKAddr = rsakey.PubKey2Addr(pub)
 		}
 
-		daemondir := config.GetBMCHomeDir()
+		daemondir := config.GetBMSHomeDir()
 		cntxt := daemon.Context{
-			PidFileName: path.Join(daemondir, "ssc.pid"),
+			PidFileName: path.Join(daemondir, "bms.pid"),
 			PidFilePerm: 0644,
-			LogFileName: path.Join(daemondir, "ssc.log"),
+			LogFileName: path.Join(daemondir, "bms.log"),
 			LogFilePerm: 0640,
 			WorkDir:     daemondir,
 			Umask:       027,
@@ -81,7 +81,7 @@ var daemonCmd = &cobra.Command{
 			log.Fatal("Unable to run: ", err)
 		}
 		if d != nil {
-			log.Println("ssc starting, please check log at:", path.Join(daemondir, "ssc.log"))
+			log.Println("bms starting, please check log at:", path.Join(daemondir, "bms.log"))
 			return
 		}
 		defer cntxt.Release()

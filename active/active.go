@@ -25,7 +25,7 @@ type WhiteListResp struct {
 }
 
 func ActiveVPN() {
-	cfg := config.GetBMCCfg()
+	cfg := config.GetBMSCfg()
 
 	req := &WhiteListReq{}
 
