@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package cmdpb;
+
+import "default.proto";
+
+message StringOP{
+    int32 op = 1;
+    string param = 2;
+}
+
+service stringopsrv {
+    rpc StringOpDo(StringOP) returns (DefaultResp) {}
+}
