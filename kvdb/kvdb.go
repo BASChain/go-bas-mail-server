@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/kprc/nbsnetwork/tools"
-	"github.com/kprc/ssactiveserver/rsakey"
+	"github.com/BASChain/go-bas-mail-server/rsakey"
 	"log"
 	"sync"
 )
@@ -51,6 +51,7 @@ func NewKVDB(p string, savepath string) *KVDB {
 	kv.password = p
 	kv.db = make(map[string]*DBV, 0)
 	kv.savepath = savepath
+	kv.Load()
 
 	return kv
 }

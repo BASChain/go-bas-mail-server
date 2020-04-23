@@ -1,7 +1,7 @@
 package instdb
 
 import (
-	"github.com/kprc/ssactiveserver/kvdb"
+	"github.com/BASChain/go-bas-mail-server/kvdb"
 	"sync"
 	"crypto/rand"
 	"github.com/btcsuite/btcutil/base58"

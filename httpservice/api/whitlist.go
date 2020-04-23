@@ -7,12 +7,12 @@ import (
 	"github.com/btcsuite/btcutil/base58"
 	"io/ioutil"
 	"net/http"
-	//"github.com/kprc/ssactiveserver/httpservice"
+	//"github.com/BASChain/go-bas-mail-server/httpservice"
 	"crypto/rsa"
-	"github.com/kprc/ssactiveserver/config"
-	"github.com/kprc/ssactiveserver/instdb"
-	"github.com/kprc/ssactiveserver/kvdb"
-	"github.com/kprc/ssactiveserver/rsakey"
+	"github.com/BASChain/go-bas-mail-server/config"
+	"github.com/BASChain/go-bas-mail-server/instdb"
+	"github.com/BASChain/go-bas-mail-server/kvdb"
+	"github.com/BASChain/go-bas-mail-server/rsakey"
 	"os/exec"
 	"strings"
 	"log"
@@ -168,7 +168,7 @@ func changeWhitIP(key,oldip string, newip string) error {
 							"--add-rich-rule='rule family=\"ipv4\" source address=\""+
 							newip+
 							"\" port port=\""+
-							strconv.Itoa(config.GetSSSCfg().SSListenPort)+
+							strconv.Itoa(config.GetBMSCfg().SSListenPort)+
 							"\" protocol=\"tcp\" accept'")
 		err := cmd.Run()
 		if err != nil {
@@ -185,7 +185,7 @@ func changeWhitIP(key,oldip string, newip string) error {
 							"--remove-rich-rule='rule family=\"ipv4\" source address=\""+
 							oldip+
 							"\" port port=\""+
-							strconv.Itoa(config.GetSSSCfg().SSListenPort)+
+							strconv.Itoa(config.GetBMSCfg().SSListenPort)+
 							"\" protocol=\"tcp\" accept'")
 		err := cmd.Run()
 		if err != nil {
@@ -250,7 +250,7 @@ func Step1(req *WhiteListReq) *WhiteListResp {
 	resp.Sn = sess.GetSn()
 
 	//resp.ServerPk
-	if bsrvpk, err := rsakey.PubKeyToBytes(config.GetSSSCfg().PubKey); err != nil {
+	if bsrvpk, err := rsakey.PubKeyToBytes(config.GetBMSCfg().PubKey); err != nil {
 		return nil
 	} else {
 		resp.ServerPk = base58.Encode(bsrvpk)

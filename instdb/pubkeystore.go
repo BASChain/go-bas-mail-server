@@ -1,8 +1,8 @@
 package instdb
 
 import (
-	"github.com/kprc/ssactiveserver/config"
-	"github.com/kprc/ssactiveserver/kvdb"
+	"github.com/BASChain/go-bas-mail-server/config"
+	"github.com/BASChain/go-bas-mail-server/kvdb"
 	"sync"
 )
 
@@ -23,7 +23,7 @@ func GetPKDB() kvdb.KVDBInterface {
 		return pubkeystore
 	}
 
-	pubkeystore = kvdb.NewKVDB("pubkeystore", config.GetSSSCfg().GetPKPath())
+	pubkeystore = kvdb.NewKVDB("pubkeystore", config.GetBMSCfg().GetPKPath())
 
 	return pubkeystore
 }

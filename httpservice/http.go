@@ -2,8 +2,8 @@ package httpservice
 
 import (
 	"context"
-	"github.com/kprc/ssactiveserver/config"
-	"github.com/kprc/ssactiveserver/httpservice/api"
+	"github.com/BASChain/go-bas-mail-server/config"
+	"github.com/BASChain/go-bas-mail-server/httpservice/api"
 	"log"
 	"net/http"
 	"strconv"
@@ -17,7 +17,7 @@ func StartWebDaemon() {
 
 	mux.Handle("/ajax/chg", api.NewWhiteList())
 
-	addr := ":" + strconv.Itoa(config.GetSSSCfg().MgtHttpPort)
+	addr := ":" + strconv.Itoa(config.GetBMSCfg().MgtHttpPort)
 
 	log.Println("Web Server Start at", addr)
 

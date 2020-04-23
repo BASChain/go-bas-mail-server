@@ -23,6 +23,8 @@ type BMSConfig struct {
 	PubKey        *rsa.PublicKey  `json:"-"`
 	PKAddr        string          `json:"-"`
 	RemoteServer  string          `json:"remoteserver"`
+	PKStorePath   string          `json:"publickeypath"`
+	SSListenPort  int             `json:"sslistenport"`
 }
 
 var (
@@ -34,6 +36,8 @@ func (bc *BMSConfig) InitCfg() *BMSConfig {
 	bc.MgtHttpPort = 50818
 	bc.KeyPath = "/keystore"
 	bc.CmdListenPort = "127.0.0.1:59527"
+	bc.PKStorePath = "/pkstore"
+	bc.SSListenPort = 50021
 
 	return bc
 }
@@ -185,4 +189,7 @@ func (bc *BMSConfig) GetPrivKey() (priv *rsa.PrivateKey) {
 
 func (bc *BMSConfig) GetPubKey() (pub *rsa.PublicKey) {
 	return bc.PubKey
+}
+func (bc *BMSConfig)GetPKPath() string  {
+	return path.Join(GetBMSHomeDir(),bc.PKStorePath)
 }
