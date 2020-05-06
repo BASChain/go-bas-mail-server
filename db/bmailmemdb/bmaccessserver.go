@@ -39,7 +39,7 @@ type AccessServer struct {
 func newBMAccessServer() *BMAccessServerDb {
 	cfg := config.GetBMSCfg()
 
-	db:=db.NewFileDb(cfg.GetBMSMSavePath())
+	db:=db.NewFileDb(cfg.GetBMSMSavePath()).Load()
 
 	return &BMAccessServerDb{NbsDbInter:db}
 
@@ -256,7 +256,7 @@ func (s *BMAccessServerDb)Next() (tld string,meta *AccessServer,r1 error)  {
 	}
 	s.dbLock.Lock()
 	s.dbLock.Unlock()
-	tld,v:=s.asCursor.Next()
+	k,v:=s.asCursor.Next()
 	if tld == ""{
 		s.dbLock.Unlock()
 		return "",nil,nil
@@ -267,6 +267,8 @@ func (s *BMAccessServerDb)Next() (tld string,meta *AccessServer,r1 error)  {
 	if err := json.Unmarshal([]byte(v),meta);err!=nil{
 		return "",nil,err
 	}
+
+	tld = k
 
 	return
 

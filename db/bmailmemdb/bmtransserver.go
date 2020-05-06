@@ -6,7 +6,7 @@ import (
 )
 
 type BMBlockTransServer struct {
-	blockTransferServer db.NbsDbInter
-	blockTransSrvLock sync.Mutex
-	btsCursor *db.DBCusor
+	db.NbsDbInter
+	dbLock sync.Mutex
+	cursor *db.DBCusor
 }
