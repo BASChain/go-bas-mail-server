@@ -25,6 +25,13 @@ type BMSConfig struct {
 	RemoteServer  string          `json:"remoteserver"`
 	PKStorePath   string          `json:"publickeypath"`
 	SSListenPort  int             `json:"sslistenport"`
+
+	DbPath		string 			 `json:"dbpath"`
+	BMailMetaDb string           `json:"bmailmetadb"`
+	BMServerMetaDb string        `json:"bmservermetadb"`
+	BMTransferDb string          `json:"bmtransferdb"`
+	BMBlackList  string          `json:"bmblacklist"`
+
 }
 
 var (
@@ -38,6 +45,14 @@ func (bc *BMSConfig) InitCfg() *BMSConfig {
 	bc.CmdListenPort = "127.0.0.1:59527"
 	bc.PKStorePath = "/pkstore"
 	bc.SSListenPort = 50021
+
+	bc.DbPath = "/db"
+	bc.BMailMetaDb = "bmm.db"
+	bc.BMServerMetaDb = "bmsm.db"
+	bc.BMTransferDb = "bmtf.db"
+	bc.BMBlackList = "bmbl.db"
+
+
 
 	return bc
 }
@@ -192,4 +207,29 @@ func (bc *BMSConfig) GetPubKey() (pub *rsa.PublicKey) {
 }
 func (bc *BMSConfig)GetPKPath() string  {
 	return path.Join(GetBMSHomeDir(),bc.PKStorePath)
+}
+
+func (bc *BMSConfig)GetDbPath() string  {
+	dbpath := path.Join(GetBMSHomeDir(),bc.DbPath)
+	if !tools.FileExists(dbpath){
+		os.MkdirAll(dbpath, 0755)
+	}
+
+	return dbpath
+}
+
+func (bc *BMSConfig)GetBMMSavePath() string  {
+	return path.Join(bc.GetDbPath(),bc.BMailMetaDb)
+}
+
+func (bc *BMSConfig)GetBMSMSavePath() string  {
+	return path.Join(bc.GetDbPath(),bc.BMServerMetaDb)
+}
+
+func (bc *BMSConfig)GetBMMLSavePath() string  {
+	return path.Join(bc.GetDbPath(),bc.BMBlackList)
+}
+
+func (bc *BMSConfig)GetBMTransferSavePath() string  {
+	return path.Join(bc.GetDbPath(),bc.BMTransferDb)
 }
