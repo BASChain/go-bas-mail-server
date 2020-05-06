@@ -84,6 +84,15 @@ func (s *BMBlockMailList)Find(mAddr string)  (*BlockMailAddress,error) {
 	}
 }
 
+func (s *BMBlockMailList)Remove(mAddr string) {
+	s.dbLock.Lock()
+	defer s.dbLock.Unlock()
+
+	s.NbsDbInter.Delete(mAddr)
+
+}
+
+
 
 func (s *BMBlockMailList)Save()  {
 
