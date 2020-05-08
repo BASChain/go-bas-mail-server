@@ -27,6 +27,7 @@ import (
 	//"github.com/BASChain/go-bas-discover-wanip/dns/mem"
 	"github.com/BASChain/go-bas-mail-server/rsakey"
 	"path"
+	"github.com/BASChain/go-bas-mail-server/bmtpserver"
 )
 
 // daemonCmd represents the daemon command
@@ -91,6 +92,9 @@ var daemonCmd = &cobra.Command{
 		//go mem.MemStateStart()
 		//go server.DNSServerDaemon()
 		//go dohserver.GetDohDaemonServer().StartDaemon()
+
+		go bmtpserver.BMTPServer{1025}.StartTCPServer()
+
 		cmdservice.GetCmdServerInst().StartCmdService()
 	},
 }

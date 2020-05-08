@@ -30,7 +30,8 @@ type BMSConfig struct {
 	BMailMetaDb string           `json:"bmailmetadb"`
 	BMServerMetaDb string        `json:"bmservermetadb"`
 	BMTransferDb string          `json:"bmtransferdb"`
-	BMBlackList  string          `json:"bmblacklist"`
+	BMBlackListdb  string          `json:"bmblacklist"`
+	BMAttachDb   string `json:"bmattachdb"`
 
 }
 
@@ -50,7 +51,8 @@ func (bc *BMSConfig) InitCfg() *BMSConfig {
 	bc.BMailMetaDb = "bmm.db"
 	bc.BMServerMetaDb = "bmsm.db"
 	bc.BMTransferDb = "bmtf.db"
-	bc.BMBlackList = "bmbl.db"
+	bc.BMBlackListdb = "bmbl.db"
+	bc.BMAttachDb = "bmattch.db"
 
 
 
@@ -227,9 +229,15 @@ func (bc *BMSConfig)GetBMSMSavePath() string  {
 }
 
 func (bc *BMSConfig)GetBMMLSavePath() string  {
-	return path.Join(bc.GetDbPath(),bc.BMBlackList)
+	return path.Join(bc.GetDbPath(),bc.BMBlackListdb)
 }
 
 func (bc *BMSConfig)GetBMTransferSavePath() string  {
 	return path.Join(bc.GetDbPath(),bc.BMTransferDb)
 }
+
+func (bc *BMSConfig)GetAttachmentSavePath() string  {
+	return path.Join(bc.GetDbPath(),bc.BMAttachDb)
+}
+
+
