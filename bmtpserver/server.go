@@ -6,10 +6,11 @@ import (
 	"github.com/pkg/errors"
 	"github.com/BASChain/go-bmail-protocol/bmprotocol"
 	"crypto/rand"
+	"time"
 )
 
 type BMTPServer struct {
-	listenPort int
+	ListenPort int
 }
 
 var gac map[string]*AcceptConn
@@ -21,8 +22,8 @@ func init()  {
 type AcceptConn struct {
 	sn []byte
 	pubkey []byte
-	//eid translayer.EnveUniqID
 	conn *net.TCPConn
+	step int
 }
 
 func (ac *AcceptConn)RcvEnvelope(bmtl *translayer.BMTransLayer)  error {
@@ -57,7 +58,7 @@ func (ac *AcceptConn)RcvEnvelope(bmtl *translayer.BMTransLayer)  error {
 	ac.sn = rse.NewSn
 
 	//ac.eid = se.EId
-	ac.pubkey = se.LPubKey
+	//ac.pubkey = se.LPubKey
 
 
 	//pack and send
@@ -68,7 +69,7 @@ func (ac *AcceptConn)RcvEnvelope(bmtl *translayer.BMTransLayer)  error {
 	}
 
 	n,err=ac.conn.Write(data)
-	if err!=nil{
+	if err!=nil || n != len(data){
 		return err
 	}
 
@@ -78,6 +79,8 @@ func (ac *AcceptConn)RcvEnvelope(bmtl *translayer.BMTransLayer)  error {
 
 
 func (ac *AcceptConn)RcvCryptEnvelope(bmtl *translayer.BMTransLayer)  error{
+
+
 	if bmtl.GetDataLen() == 0{
 		return errors.New("Receive error envelope message")
 	}
@@ -104,13 +107,10 @@ func (ac *AcceptConn)RcvCryptEnvelope(bmtl *translayer.BMTransLayer)  error{
 	rse.NewSn = NewSn()
 	rse.Sn = se.Sn
 	rse.EId = se.EId
+	rse.CxtHashSig = NewSn()
 	rse.ErrId = 0
 
 	ac.sn = rse.NewSn
-
-	//ac.eid = se.EId
-	ac.pubkey = se.LPubKey
-
 
 	//pack and send
 
@@ -123,6 +123,8 @@ func (ac *AcceptConn)RcvCryptEnvelope(bmtl *translayer.BMTransLayer)  error{
 	if err!=nil{
 		return err
 	}
+
+
 
 	return nil
 }
@@ -162,7 +164,7 @@ func (ac *AcceptConn)RcvHelo(bmtl *translayer.BMTransLayer) error {
 
 
 func (s *BMTPServer)StartTCPServer() error {
-	laddr:=&net.TCPAddr{IP:net.ParseIP("0.0.0.0"),Port:s.listenPort}
+	laddr:=&net.TCPAddr{IP:net.ParseIP("0.0.0.0"),Port:s.ListenPort}
 
 	l,err:=net.ListenTCP("tcp4",laddr)
 	if err!=nil{
@@ -196,7 +198,14 @@ func handleConnect(c *net.TCPConn) error {
 
 	gac[raddrstr] = ac
 
+	c.SetDeadline(time.Now().Add(10*time.Second))
+
 	for{
+
+		if ac.step == 1{
+			c.SetDeadline(time.Now().Add(30*time.Second))
+		}
+
 		buf:=make([]byte,translayer.BMHeadSize())
 		n,err := ac.conn.Read(buf)
 		if err!=nil || n != len(buf){
@@ -215,10 +224,12 @@ func handleConnect(c *net.TCPConn) error {
 			if err := ac.RcvHelo(bmtl);err!=nil{
 				return err
 			}
+
 		case translayer.SEND_CRYPT_ENVELOPE:
 			if err:=ac.RcvCryptEnvelope(bmtl);err!=nil{
 				return err
 			}
+			ac.step = 1
 		}
 
 

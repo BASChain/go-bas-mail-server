@@ -23,9 +23,7 @@ import (
 	"github.com/BASChain/go-bas-mail-server/app/cmdcommon"
 	"github.com/BASChain/go-bas-mail-server/app/cmdservice"
 	"github.com/BASChain/go-bas-mail-server/config"
-	//"github.com/BASChain/go-bas-discover-wanip/dns/dohserver"
-	//"github.com/BASChain/go-bas-discover-wanip/dns/mem"
-	"github.com/BASChain/go-bas-mail-server/rsakey"
+
 	"path"
 	"github.com/BASChain/go-bas-mail-server/bmtpserver"
 )
@@ -53,19 +51,19 @@ var daemonCmd = &cobra.Command{
 		//	}
 		//}
 
-		if keypassword == "" {
-			log.Println("Please input password")
-			return
-		}
-
-		if priv, pub, err := rsakey.LoadRSAKey(cfg.GetKeyPath(), []byte(keypassword)); err != nil {
-			log.Println("Recover RSA Key Failed")
-			return
-		} else {
-			cfg.SetPrivKey(priv)
-			cfg.SetPubKey(pub)
-			cfg.PKAddr = rsakey.PubKey2Addr(pub)
-		}
+		//if keypassword == "" {
+		//	log.Println("Please input password")
+		//	return
+		//}
+		//
+		//if priv, pub, err := rsakey.LoadRSAKey(cfg.GetKeyPath(), []byte(keypassword)); err != nil {
+		//	log.Println("Recover RSA Key Failed")
+		//	return
+		//} else {
+		//	cfg.SetPrivKey(priv)
+		//	cfg.SetPubKey(pub)
+		//	cfg.PKAddr = rsakey.PubKey2Addr(pub)
+		//}
 
 		daemondir := config.GetBMSHomeDir()
 		cntxt := daemon.Context{
@@ -93,7 +91,7 @@ var daemonCmd = &cobra.Command{
 		//go server.DNSServerDaemon()
 		//go dohserver.GetDohDaemonServer().StartDaemon()
 
-		go bmtpserver.BMTPServer{1025}.StartTCPServer()
+		go bmtpserver.GetBMTPServer().StartTCPServer()
 
 		cmdservice.GetCmdServerInst().StartCmdService()
 	},

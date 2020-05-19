@@ -22,9 +22,9 @@ import (
 	"github.com/BASChain/go-bas-mail-server/config"
 
 	"github.com/BASChain/go-bas-mail-server/app/cmdservice"
-	"github.com/BASChain/go-bas-mail-server/rsakey"
 	"github.com/spf13/cobra"
 	"log"
+	"github.com/BASChain/go-bas-mail-server/bmtpserver"
 )
 
 ////var cfgFile string
@@ -50,27 +50,28 @@ var rootCmd = &cobra.Command{
 		cfg := config.GetBMSCfg()
 		cfg.Save()
 
-		if keypassword == "" {
-			if keypassword, err = inputpassword(); err != nil {
-				log.Println(err)
-				return
-			}
-		}
+		//if keypassword == "" {
+		//	if keypassword, err = inputpassword(); err != nil {
+		//		log.Println(err)
+		//		return
+		//	}
+		//}
+		//
+		//if keypassword == "" {
+		//	log.Println("Please input password")
+		//	return
+		//}
 
-		if keypassword == "" {
-			log.Println("Please input password")
-			return
-		}
-
-		if priv, pub, err := rsakey.LoadRSAKey(cfg.GetKeyPath(), []byte(keypassword)); err != nil {
-			log.Println("Recover RSA Key Failed")
-			return
-		} else {
-			cfg.SetPrivKey(priv)
-			cfg.SetPubKey(pub)
-
-			cfg.PKAddr = rsakey.PubKey2Addr(pub)
-		}
+		//if priv, pub, err := rsakey.LoadRSAKey(cfg.GetKeyPath(), []byte(keypassword)); err != nil {
+		//	log.Println("Recover RSA Key Failed")
+		//	return
+		//} else {
+		//	cfg.SetPrivKey(priv)
+		//	cfg.SetPubKey(pub)
+		//
+		//	cfg.PKAddr = rsakey.PubKey2Addr(pub)
+		//}
+		go bmtpserver.GetBMTPServer().StartTCPServer()
 
 		cmdservice.GetCmdServerInst().StartCmdService()
 	},

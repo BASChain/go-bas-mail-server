@@ -25,12 +25,11 @@ var (
 type MxServerAddr struct {
 	Weight int 	`json:"w"`
 	IPAddr net.IP 	`json:"i"`
-
+	Pubkey dbcommon.PKey
 }
 
 type AccessServer struct {
 	TopDomain string `json:"td"`
-	PublicKey dbcommon.PKey	`json:"pk"`
 	Addr []*MxServerAddr `json:"a"`
 	CreateTime int64 	`json:"ct"`
 	UpdateTime int64	`json:"ut"`

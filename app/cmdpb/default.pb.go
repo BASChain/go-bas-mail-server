@@ -3,11 +3,9 @@
 
 package cmdpb
 
-import (
-	fmt "fmt"
-	proto "github.com/golang/protobuf/proto"
-	math "math"
-)
+import proto "github.com/golang/protobuf/proto"
+import fmt "fmt"
+import math "math"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -18,7 +16,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type DefaultRequest struct {
 	Reqid                int32    `protobuf:"varint,1,opt,name=reqid,proto3" json:"reqid,omitempty"`
@@ -31,17 +29,16 @@ func (m *DefaultRequest) Reset()         { *m = DefaultRequest{} }
 func (m *DefaultRequest) String() string { return proto.CompactTextString(m) }
 func (*DefaultRequest) ProtoMessage()    {}
 func (*DefaultRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b1e5780510d421cc, []int{0}
+	return fileDescriptor_default_4d99895d725092fe, []int{0}
 }
-
 func (m *DefaultRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DefaultRequest.Unmarshal(m, b)
 }
 func (m *DefaultRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DefaultRequest.Marshal(b, m, deterministic)
 }
-func (m *DefaultRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DefaultRequest.Merge(m, src)
+func (dst *DefaultRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DefaultRequest.Merge(dst, src)
 }
 func (m *DefaultRequest) XXX_Size() int {
 	return xxx_messageInfo_DefaultRequest.Size(m)
@@ -70,17 +67,16 @@ func (m *DefaultRequestMsg) Reset()         { *m = DefaultRequestMsg{} }
 func (m *DefaultRequestMsg) String() string { return proto.CompactTextString(m) }
 func (*DefaultRequestMsg) ProtoMessage()    {}
 func (*DefaultRequestMsg) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b1e5780510d421cc, []int{1}
+	return fileDescriptor_default_4d99895d725092fe, []int{1}
 }
-
 func (m *DefaultRequestMsg) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DefaultRequestMsg.Unmarshal(m, b)
 }
 func (m *DefaultRequestMsg) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DefaultRequestMsg.Marshal(b, m, deterministic)
 }
-func (m *DefaultRequestMsg) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DefaultRequestMsg.Merge(m, src)
+func (dst *DefaultRequestMsg) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DefaultRequestMsg.Merge(dst, src)
 }
 func (m *DefaultRequestMsg) XXX_Size() int {
 	return xxx_messageInfo_DefaultRequestMsg.Size(m)
@@ -109,17 +105,16 @@ func (m *DefaultResp) Reset()         { *m = DefaultResp{} }
 func (m *DefaultResp) String() string { return proto.CompactTextString(m) }
 func (*DefaultResp) ProtoMessage()    {}
 func (*DefaultResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b1e5780510d421cc, []int{2}
+	return fileDescriptor_default_4d99895d725092fe, []int{2}
 }
-
 func (m *DefaultResp) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DefaultResp.Unmarshal(m, b)
 }
 func (m *DefaultResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DefaultResp.Marshal(b, m, deterministic)
 }
-func (m *DefaultResp) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DefaultResp.Merge(m, src)
+func (dst *DefaultResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DefaultResp.Merge(dst, src)
 }
 func (m *DefaultResp) XXX_Size() int {
 	return xxx_messageInfo_DefaultResp.Size(m)
@@ -149,17 +144,16 @@ func (m *DefaultRequestIDMsg) Reset()         { *m = DefaultRequestIDMsg{} }
 func (m *DefaultRequestIDMsg) String() string { return proto.CompactTextString(m) }
 func (*DefaultRequestIDMsg) ProtoMessage()    {}
 func (*DefaultRequestIDMsg) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b1e5780510d421cc, []int{3}
+	return fileDescriptor_default_4d99895d725092fe, []int{3}
 }
-
 func (m *DefaultRequestIDMsg) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DefaultRequestIDMsg.Unmarshal(m, b)
 }
 func (m *DefaultRequestIDMsg) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DefaultRequestIDMsg.Marshal(b, m, deterministic)
 }
-func (m *DefaultRequestIDMsg) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DefaultRequestIDMsg.Merge(m, src)
+func (dst *DefaultRequestIDMsg) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DefaultRequestIDMsg.Merge(dst, src)
 }
 func (m *DefaultRequestIDMsg) XXX_Size() int {
 	return xxx_messageInfo_DefaultRequestIDMsg.Size(m)
@@ -191,9 +185,9 @@ func init() {
 	proto.RegisterType((*DefaultRequestIDMsg)(nil), "cmdpb.DefaultRequestIDMsg")
 }
 
-func init() { proto.RegisterFile("default.proto", fileDescriptor_b1e5780510d421cc) }
+func init() { proto.RegisterFile("default.proto", fileDescriptor_default_4d99895d725092fe) }
 
-var fileDescriptor_b1e5780510d421cc = []byte{
+var fileDescriptor_default_4d99895d725092fe = []byte{
 	// 136 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4d, 0x49, 0x4d, 0x4b,
 	0x2c, 0xcd, 0x29, 0xd1, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x4d, 0xce, 0x4d, 0x29, 0x48,
