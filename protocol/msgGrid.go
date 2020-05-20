@@ -4,7 +4,8 @@ import (
 	"github.com/BASChain/go-bmail-protocol/translayer"
 	"github.com/BASChain/go-bmail-protocol/bmp"
 	"encoding/json"
-	"github.com/BASChain/go-bas-mail-server/bmtpserver"
+
+	"crypto/rand"
 )
 
 type MsgBody interface {
@@ -23,6 +24,7 @@ type CryptEnvelopeMsg struct {
 
 func (cem *CryptEnvelopeMsg)UnPack(data []byte) error  {
 	cem.EpSyn = &bmp.EnvelopeSyn{}
+	cem.EpSyn.Env = &bmp.CryptEnvelope{}
 	if err:=json.Unmarshal(data,cem.EpSyn);err!=nil{
 		return err
 	}
@@ -45,11 +47,25 @@ func (cem *CryptEnvelopeMsg)UnPack(data []byte) error  {
 //	return nil
 //}
 
+func newSn() []byte  {
+	sn := make([]byte, 16)
+
+	for {
+		n, _ := rand.Read(sn)
+		if n != len(sn) {
+			continue
+		}
+		break
+	}
+
+	return sn
+}
+
 func (cem *CryptEnvelopeMsg)Response() (*bmp.EnvelopeAck,error){
 	ack:=&bmp.EnvelopeAck{}
-	copy(ack.NextSN[:],bmtpserver.NewSn())
+	copy(ack.NextSN[:],newSn())
 	ack.Hash = cem.EpSyn.Hash
-	ack.Sig = bmtpserver.NewSn()
+	ack.Sig = newSn()
 
 	cem.EpAck = ack
 

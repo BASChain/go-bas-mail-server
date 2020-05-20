@@ -7,6 +7,7 @@ import (
 	"log"
 	"time"
 	"github.com/BASChain/go-bas-mail-server/wallet"
+	"fmt"
 )
 
 type BMTPFunc func (*TcpSession) error
@@ -25,7 +26,7 @@ type BMTPServerConf struct {
 	quit chan interface{}
 	wg sync.WaitGroup
 	timeout int
-	wallet wallet.ServerWallet
+	wallet wallet.ServerWalletIntf
 }
 
 type BMTPServerIntf interface {
@@ -40,8 +41,12 @@ func NewServer2() BMTPServerIntf  {
 
 	server.ListenPort = translayer.BMTP_PORT
 	server.quit = make(chan interface{})
+	server.SupportFunc = make(map[int]BMTPFunc)
 	server.SupportFunc[int(translayer.BMAILVER1)] = HandleMsgV1
+	server.Session = make(map[string]*TcpSession)
+	server.quit = make(chan interface{},1)
 	server.timeout = 10 //second
+	server.wallet = wallet.GetServerWallet()
 
 	return server
 }
@@ -71,7 +76,7 @@ func (s *BMTPServerConf)SupportVersion() []uint16 {
 	if s.supportVersion == nil{
 		i:=0
 		for k,_:=range s.SupportFunc{
-			s.supportVersion[i] = uint16(k)
+			s.supportVersion = append(s.supportVersion ,uint16(k))
 			i++
 		}
 	}
@@ -133,11 +138,13 @@ func (s *BMTPServerConf)handleConnect(conn *net.TCPConn)  {
 
 	ac:=&TcpSession{}
 	ac.conn = conn
+	ac.server = s
 
 	s.Session[raddrstr] = ac
 
 
 	if err:=ac.Negotiation();err!=nil{
+		fmt.Println(err)
 		return
 	}
 	for {
@@ -147,6 +154,7 @@ func (s *BMTPServerConf)handleConnect(conn *net.TCPConn)  {
 			return
 		default:
 			if err:=ac.Handle(ac);err!=nil{
+				fmt.Println(err)
 				return
 			}
 			s.timeout = 30 //second

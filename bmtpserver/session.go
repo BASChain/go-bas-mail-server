@@ -11,6 +11,8 @@ import (
 	"strconv"
 	"crypto/rand"
 	"github.com/BASChain/go-bas-mail-server/protocol"
+	"fmt"
+	"encoding/hex"
 )
 
 
@@ -51,6 +53,7 @@ func (ts *TcpSession)Negotiation() error  {
 	support:=ts.server.VersionInSrv(int(ts.bmtl.GetVersion()))
 
 	ack:=&bmp.HELOACK{}
+	fmt.Println("support",support)
 	if support == false{
 		ack.ErrCode = 1
 		ack.SupportVersion = ts.server.SupportVersion()
@@ -68,6 +71,7 @@ func (ts *TcpSession)Negotiation() error  {
 	}
 
 	if support{
+		fmt.Println("version",ts.bmtl.GetVersion())
 		ts.Handle = ts.server.SupportFunc[int(ts.bmtl.GetVersion())]
 		return nil
 	}else{
@@ -84,6 +88,8 @@ func (ts *TcpSession)WriteMsg() error {
 		return err
 	}
 
+	fmt.Println(string(buf),"len buf:",len(buf))
+
 	bmtl.SetDataLen(uint32(len(buf)))
 
 	data,_:=bmtl.Pack()
@@ -94,8 +100,10 @@ func (ts *TcpSession)WriteMsg() error {
 		return errors.New("Write "+strconv.Itoa(int(ts.wbody.MsgType()))+" message head Failed")
 	}
 
+	fmt.Println(hex.EncodeToString(data))
+
 	n,err = ts.conn.Write(buf)
-	if err!=nil || n != len(data){
+	if err!=nil || n != len(buf){
 		return errors.New("Write "+strconv.Itoa(int(ts.wbody.MsgType()))+" message body Failed")
 	}
 
