@@ -5,9 +5,8 @@ import (
 	"github.com/BASChain/go-bas-mail-server/config"
 	"github.com/BASChain/go-bas-mail-server/rsakey"
 	"github.com/btcsuite/btcutil/base58"
-	"github.com/rickeyliao/ServiceAgent/common"
+	//"github.com/rickeyliao/ServiceAgent/common"
 	"log"
-	"strconv"
 )
 
 type WhiteListReq struct {
@@ -46,12 +45,12 @@ func ActiveVPN() {
 
 	jsonstr, err := json.Marshal(*req)
 	if err != nil {
-		log.Println("Marshall json error", err)
+		log.Println("Marshall json error", err,string(jsonstr))
 		return
 	}
 	var r string
 	var code int
-	r, code, err = common.Post1("http://"+cfg.RemoteServer+":"+strconv.Itoa(cfg.MgtHttpPort)+"/ajax/chg", string(jsonstr), false)
+	//r, code, err = common.Post1("http://"+cfg.RemoteServer+":"+strconv.Itoa(cfg.MgtHttpPort)+"/ajax/chg", string(jsonstr), false)
 
 	if err != nil || code != 200 {
 		log.Println("step 1 failed", err)
@@ -86,11 +85,11 @@ func ActiveVPN() {
 
 	jsonstr, err = json.Marshal(*req)
 	if err != nil {
-		log.Println("Marshall json error,step 2", err)
+		log.Println("Marshall json error,step 2", err,string(jsonstr))
 		return
 	}
 
-	r, code, err = common.Post1("http://"+cfg.RemoteServer+":"+strconv.Itoa(cfg.MgtHttpPort)+"/ajax/chg", string(jsonstr), false)
+	//r, code, err = common.Post1("http://"+cfg.RemoteServer+":"+strconv.Itoa(cfg.MgtHttpPort)+"/ajax/chg", string(jsonstr), false)
 
 	if err != nil || code != 200 {
 		log.Println("step 2 failed", err)
