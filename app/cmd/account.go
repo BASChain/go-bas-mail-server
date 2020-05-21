@@ -16,17 +16,17 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/BASChain/go-bas-mail-server/app/cmdclient"
-	"github.com/BASChain/go-bas-mail-server/app/cmdcommon"
 	"github.com/spf13/cobra"
 	"log"
+	"github.com/BASChain/go-bas-mail-server/app/cmdcommon"
+	"github.com/BASChain/go-bas-mail-server/app/cmdclient"
 )
 
-// showpkCmd represents the showpk command
-var showpkCmd = &cobra.Command{
-	Use:   "showpk",
-	Short: "show public key",
-	Long:  `show public key`,
+// accountCmd represents the account command
+var accountCmd = &cobra.Command{
+	Use:   "account",
+	Short: "show account",
+	Long: `show account`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if _, err := cmdcommon.IsProcessStarted(); err != nil {
 			log.Println(err)
@@ -38,15 +38,15 @@ var showpkCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(showpkCmd)
+	rootCmd.AddCommand(accountCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// showpkCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// accountCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// showpkCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// accountCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

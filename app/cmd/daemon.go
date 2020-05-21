@@ -25,7 +25,6 @@ import (
 	"github.com/BASChain/go-bas-mail-server/config"
 
 	"path"
-	"github.com/BASChain/go-bas-mail-server/bmtpserver"
 )
 
 // daemonCmd represents the daemon command
@@ -44,26 +43,7 @@ var daemonCmd = &cobra.Command{
 		InitCfg()
 		cfg := config.GetBMSCfg()
 		cfg.Save()
-		//if keypassword == ""{
-		//	if keypassword, err = inputpassword(); err != nil {
-		//		log.Println(err)
-		//		return
-		//	}
-		//}
 
-		//if keypassword == "" {
-		//	log.Println("Please input password")
-		//	return
-		//}
-		//
-		//if priv, pub, err := rsakey.LoadRSAKey(cfg.GetKeyPath(), []byte(keypassword)); err != nil {
-		//	log.Println("Recover RSA Key Failed")
-		//	return
-		//} else {
-		//	cfg.SetPrivKey(priv)
-		//	cfg.SetPubKey(pub)
-		//	cfg.PKAddr = rsakey.PubKey2Addr(pub)
-		//}
 
 		daemondir := config.GetBMSHomeDir()
 		cntxt := daemon.Context{
@@ -85,13 +65,7 @@ var daemonCmd = &cobra.Command{
 		}
 		defer cntxt.Release()
 
-		//BAS_Ethereum.RecoverContract()
-		//go service.StartService()
-		//go mem.MemStateStart()
-		//go server.DNSServerDaemon()
-		//go dohserver.GetDohDaemonServer().StartDaemon()
-
-		go bmtpserver.GetBMTPServer().StartTCPServer()
+		//go bmtpserver.GetBMTPServer().StartTCPServer()
 
 		cmdservice.GetCmdServerInst().StartCmdService()
 	},
@@ -110,18 +84,8 @@ func init() {
 	// is called directly, e.g.:
 	// daemonCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	//daemonCmd.Flags().IntVarP(&cmdroottcpport, "tcp-listen-port", "t", 65566, "local tcp listen port")
-	//daemonCmd.Flags().IntVarP(&cmdrootudpport, "udp-listen-port", "u", 65566, "local udp listen port")
-	//daemonCmd.Flags().StringVarP(&cmdropstennap, "ropsten-network-access-point", "r", "", "ropsten network access point")
-	//daemonCmd.Flags().StringVarP(&cmdbastokenaddr, "bas-token-address", "a", "", "bas token address")
-	//daemonCmd.Flags().StringVarP(&cmdbasmgraddr, "bas-mgr-address", "m", "", "bas manager address")
+
 	daemonCmd.Flags().StringVarP(&cmdconfigfilename, "config-file-name", "c", "", "configuration file name")
-	daemonCmd.Flags().StringVarP(&keypassword, "password", "p", "", "password for key encrypt")
-	//daemonCmd.Flags().IntVarP(&cmddohserverport, "doh-listen-port", "p", 65566, "local doh server listen port")
-	//daemonCmd.Flags().StringVarP(&cmdcertfile, "cert-file", "f", "", "certificate file for tls")
-	//daemonCmd.Flags().StringVarP(&cmdkeyfile, "key-file", "k", "", "private key file for tls")
-	//daemonCmd.Flags().StringVarP(&cmddnspath, "dns-query-path", "q", "", "path for dns query")
-	//daemonCmd.Flags().IntVarP(&cmdquerydnstimeout, "dns-query-time", "o", 0, "max time for wait remote dns server reply")
-	//daemonCmd.Flags().IntVarP(&cmdquerydnstrytimes, "dns-query-times", "s", 0, "max times for sending dns to remote dns server ")
+
 
 }

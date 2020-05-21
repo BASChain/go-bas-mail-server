@@ -11,6 +11,10 @@ import (
 
 	"github.com/BASChain/go-bas-mail-server/app/cmdcommon"
 	"github.com/BASChain/go-bas-mail-server/app/cmdpb"
+	"github.com/BASChain/go-bmail-account"
+	"github.com/BASChain/go-bas-mail-server/bmtpserver"
+	"github.com/BASChain/go-bmail-protocol/translayer"
+	"strconv"
 )
 
 type CmdDefaultServer struct {
@@ -28,7 +32,11 @@ func (cds *CmdDefaultServer) DefaultCmdDo(ctx context.Context,
 	}
 
 	if request.Reqid == cmdcommon.CMD_PK_SHOW {
-		return cds.pkshow()
+		return cds.showAccout()
+	}
+
+	if request.Reqid == cmdcommon.CMD_RUN{
+		return cds.serverRun()
 	}
 
 	resp := &cmdpb.DefaultResp{}
@@ -67,8 +75,16 @@ func (cds *CmdDefaultServer) configShow() (*cmdpb.DefaultResp, error) {
 	return encapResp(string(bapc)), nil
 }
 
-func (cds *CmdDefaultServer) pkshow() (*cmdpb.DefaultResp, error) {
+func (cds *CmdDefaultServer) showAccout() (*cmdpb.DefaultResp, error) {
 	cfg := config.GetBMSCfg()
 
-	return encapResp(cfg.PKAddr), nil
+	return encapResp("Account: "+bmail.ToAddress(cfg.PubKey).String()),nil
+}
+
+func (cds *CmdDefaultServer)serverRun() (*cmdpb.DefaultResp,error)  {
+
+	go bmtpserver.GetBMTPServer().StartTCPServer()
+
+	return encapResp("bmtp server start at: "+strconv.Itoa(int(translayer.BMTP_PORT))),nil
+
 }

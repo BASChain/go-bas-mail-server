@@ -16,61 +16,53 @@ limitations under the License.
 package cmd
 
 import (
-
-	"github.com/BASChain/go-bas-mail-server/app/cmdcommon"
-	"github.com/BASChain/go-bas-mail-server/config"
-
-
 	"github.com/spf13/cobra"
 	"log"
-
+	"github.com/BASChain/go-bas-mail-server/app/cmdcommon"
+	"github.com/BASChain/go-bas-mail-server/bmailcrypt"
+	"github.com/BASChain/go-bas-mail-server/app/cmdclient"
 )
 
-//var keypassword string
-var remoteserver string
-
-
-
-// initCmd represents the init command
-var initCmd = &cobra.Command{
-	Use:   "init",
-	Short: "init bms",
-	Long:  `init bms`,
+// loadCmd represents the load command
+var loadCmd = &cobra.Command{
+	Use:   "load",
+	Short: "load account",
+	Long: `load account`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var err error
-
-		_, err = cmdcommon.IsProcessCanStarted()
-		if err != nil {
+		if _, err := cmdcommon.IsProcessStarted(); err != nil {
 			log.Println(err)
 			return
 		}
 
-		InitCfg()
+		if !bmailcrypt.KeyIsGenerated() {
+			log.Println("please create account first")
+			return
+		}
 
+		var err error
 
-		cfg := config.GetBMSCfg()
-		cfg.RemoteServer = remoteserver
+		if keypassword == "" {
+			if keypassword, err = inputpassword(); err != nil {
+				log.Println(err)
+				return
+			}
+		}
 
-		cfg.Save()
+		cmdclient.StringOpCmdSend("", cmdcommon.CMD_ACCOUNT_LOAD, keypassword)
 
-		//s58 := rsakey.PubKey2Addr(config.GetBMSCfg().PubKey)
-
-		//log.Println("Init success!, Public key: ", s58)
 	},
 }
 
-
 func init() {
-	rootCmd.AddCommand(initCmd)
+	accountCmd.AddCommand(loadCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// initCmd.PersistentFlags().String("foo", "", "A help for foo")
-	//initCmd.Flags().StringVarP(&keypassword, "password", "p", "", "password for key encrypt")
-	initCmd.Flags().StringVarP(&remoteserver, "host", "r", "", "remote server ip address")
+	// loadCmd.PersistentFlags().String("foo", "", "A help for foo")
+
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// initCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// loadCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

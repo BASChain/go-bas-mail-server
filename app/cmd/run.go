@@ -16,41 +16,37 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/BASChain/go-bas-mail-server/app/cmdclient"
-	"github.com/BASChain/go-bas-mail-server/app/cmdcommon"
 	"github.com/spf13/cobra"
 	"log"
+	"github.com/BASChain/go-bas-mail-server/app/cmdcommon"
+	"github.com/BASChain/go-bas-mail-server/app/cmdclient"
 )
 
-// exampleCmd represents the example command
-var exampleCmd = &cobra.Command{
-	Use:   "example",
-	Short: "show example",
-	Long:  `show example`,
+// runCmd represents the run command
+var runCmd = &cobra.Command{
+	Use:   "run",
+	Short: "start tcp server",
+	Long: `start tcp server`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if _, err := cmdcommon.IsProcessStarted(); err != nil {
 			log.Println(err)
 			return
 		}
 
-		if len(args) == 0 {
-			cmdclient.StringOpCmdSend("", cmdcommon.CMD_EXAMPLE, "")
-		} else {
-			cmdclient.StringOpCmdSend("", cmdcommon.CMD_EXAMPLE, args[0])
-		}
+		cmdclient.DefaultCmdSend("", cmdcommon.CMD_RUN)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(exampleCmd)
+	rootCmd.AddCommand(runCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// exampleCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// runCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// exampleCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// runCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

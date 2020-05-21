@@ -1,13 +1,13 @@
 package config
 
 import (
-	"crypto/rsa"
 	"encoding/json"
 	"github.com/kprc/nbsnetwork/tools"
 	"log"
 	"os"
 	"path"
 	"sync"
+	"crypto/ed25519"
 )
 
 const (
@@ -19,9 +19,8 @@ type BMSConfig struct {
 	MgtHttpPort   int             `json:"mgthttpport"`
 	KeyPath       string          `json:"keypath"`
 	CmdListenPort string          `json:"cmdlistenport"`
-	PrivKey       *rsa.PrivateKey `json:"-"`
-	PubKey        *rsa.PublicKey  `json:"-"`
-	PKAddr        string          `json:"-"`
+	PrivKey       ed25519.PrivateKey `json:"-"`
+	PubKey        ed25519.PublicKey  `json:"-"`
 	RemoteServer  string          `json:"remoteserver"`
 	PKStorePath   string          `json:"publickeypath"`
 	SSListenPort  int             `json:"sslistenport"`
@@ -53,8 +52,6 @@ func (bc *BMSConfig) InitCfg() *BMSConfig {
 	bc.BMTransferDb = "bmtf.db"
 	bc.BMBlackListdb = "bmbl.db"
 	bc.BMAttachDb = "bmattch.db"
-
-
 
 	return bc
 }
@@ -193,20 +190,6 @@ func (bc *BMSConfig) GetKeyPath() string {
 
 }
 
-func (bc *BMSConfig) SetPrivKey(priv *rsa.PrivateKey) {
-	bc.PrivKey = priv
-}
-
-func (bc *BMSConfig) SetPubKey(pub *rsa.PublicKey) {
-	bc.PubKey = pub
-}
-func (bc *BMSConfig) GetPrivKey() (priv *rsa.PrivateKey) {
-	return bc.PrivKey
-}
-
-func (bc *BMSConfig) GetPubKey() (pub *rsa.PublicKey) {
-	return bc.PubKey
-}
 func (bc *BMSConfig)GetPKPath() string  {
 	return path.Join(GetBMSHomeDir(),bc.PKStorePath)
 }
