@@ -7,7 +7,8 @@ import (
 type RBody interface {
 	UnPack(data []byte) error
 	Verify() bool
-	//Save2DB()	error
+	SetCurrentSn(sn []byte)
+	Save2DB()	error
 	Response() (WBody,error)
 }
 

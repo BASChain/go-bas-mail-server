@@ -6,9 +6,12 @@ import (
 	"github.com/BASChain/go-bas-mail-server/wallet"
 	"bytes"
 	"github.com/BASChain/go-bas-mail-server/tools"
+	"github.com/BASChain/go-bmail-resolver"
+	"github.com/BASChain/go-bas-mail-server/bmailcrypt"
 )
 
 type CryptEnvelopeMsg struct {
+	Sn []byte
 	EpSyn *bmp.EnvelopeSyn
 	CryptEp *bmp.CryptEnvelope
 	//RawEp *bmp.RawEnvelope
@@ -28,16 +31,38 @@ func (cem *CryptEnvelopeMsg)UnPack(data []byte) error  {
 }
 
 func (cem *CryptEnvelopeMsg)Verify() bool  {
-	//todo
+	if bytes.Compare(cem.Sn,cem.EpSyn.SN[:])!=0{
+		return false
+	}
+
+	addr,_:=resolver.NewEthResolver(true).BMailBCA(cem.CryptEp.EnvelopeHead.From)
+	if addr != cem.CryptEp.FromAddr{
+		return false
+	}
+
+
+	if !bmailcrypt.Verify(addr.ToPubKey(),cem.EpSyn.SN[:],cem.EpSyn.Sig){
+		return false
+	}
+
+	toaddr,_:=resolver.NewEthResolver(true).BMailBCA(cem.CryptEp.EnvelopeHead.To)
+	if toaddr != cem.CryptEp.ToAddr{
+		return false
+	}
+
 
 	return true
 }
 
-//func (cem *CryptEnvelopeMsg)Save2DB() error  {
-//	//todo...
-//
-//	return nil
-//}
+func (cem *CryptEnvelopeMsg)SetCurrentSn(sn []byte)  {
+	cem.Sn = sn
+}
+
+func (cem *CryptEnvelopeMsg)Save2DB() error  {
+	//todo...
+
+	return nil
+}
 
 func (cem *CryptEnvelopeMsg)Response() (WBody,error){
 	ack:=&bmp.EnvelopeAck{}

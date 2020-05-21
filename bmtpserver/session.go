@@ -178,10 +178,12 @@ func HandleMsgV1(ts *TcpSession) error  {
 	if err:=ts.readBody();err!=nil{
 		return err
 	}
+	ts.rbody.SetCurrentSn(ts.sn)
 
-	//if err:=ts.rbody.Save2DB();err!=nil{
-	//	return err
-	//}
+
+	if !ts.rbody.Verify(){
+		return errors.New("error")
+	}
 
 	if resp,err:=ts.rbody.Response();err!=nil{
 		ts.wbody = resp
@@ -193,6 +195,10 @@ func HandleMsgV1(ts *TcpSession) error  {
 			return err
 		}
 	}
+	if err:=ts.rbody.Save2DB();err!=nil{
+		return err
+	}
+
 
 	return nil
 
