@@ -9,10 +9,9 @@ import (
 	"github.com/BASChain/go-bmail-protocol/translayer"
 	"github.com/BASChain/go-bmail-protocol/bmp"
 	"strconv"
-	"crypto/rand"
 	"github.com/BASChain/go-bas-mail-server/protocol"
 	"fmt"
-	"encoding/hex"
+	"github.com/BASChain/go-bas-mail-server/tools"
 )
 
 
@@ -26,24 +25,11 @@ type TcpSession struct {
 	version int
 	buf []byte
 	bmtl *translayer.BMTransLayer
-	rbody protocol.MsgBody
-	wbody bmp.EnvelopeMsg
+	rbody protocol.RBody
+	wbody protocol.WBody
 }
 
 
-func newSn() []byte  {
-	sn := make([]byte, 16)
-
-	for {
-		n, _ := rand.Read(sn)
-		if n != len(sn) {
-			continue
-		}
-		break
-	}
-
-	return sn
-}
 
 func (ts *TcpSession)Negotiation() error  {
 	if err:=ts.readHead();err!=nil{
@@ -53,13 +39,13 @@ func (ts *TcpSession)Negotiation() error  {
 	support:=ts.server.VersionInSrv(int(ts.bmtl.GetVersion()))
 
 	ack:=&bmp.HELOACK{}
-	fmt.Println("support",support)
+
 	if support == false{
 		ack.ErrCode = 1
 		ack.SupportVersion = ts.server.SupportVersion()
 	}else{
 		ack.ErrCode = 0
-		ts.sn = newSn()
+		ts.sn = tools.NewSn(tools.SerialNumberLength)
 		copy(ack.SN[:],ts.sn)
 		ack.SrvBca = ts.server.wallet.BCAddress()
 	}
@@ -88,8 +74,6 @@ func (ts *TcpSession)WriteMsg() error {
 		return err
 	}
 
-	fmt.Println(string(buf),"len buf:",len(buf))
-
 	bmtl.SetDataLen(uint32(len(buf)))
 
 	data,_:=bmtl.Pack()
@@ -99,8 +83,6 @@ func (ts *TcpSession)WriteMsg() error {
 	if err!=nil || n != len(data){
 		return errors.New("Write "+strconv.Itoa(int(ts.wbody.MsgType()))+" message head Failed")
 	}
-
-	fmt.Println(hex.EncodeToString(data))
 
 	n,err = ts.conn.Write(buf)
 	if err!=nil || n != len(buf){

@@ -2,16 +2,22 @@ package wallet
 
 import (
 	"github.com/BASChain/go-bmail-account"
-	"crypto/rand"
 	"sync"
+	"github.com/BASChain/go-bas-mail-server/config"
+	"crypto/ed25519"
+	"github.com/BASChain/go-bas-mail-server/bmailcrypt"
 )
 
 type ServerWalletIntf interface {
 	BCAddress() bmail.Address
+	Sign(message []byte) []byte
+	//Verify(message,sig []byte) bool
 }
 
 type ServerWallet struct {
 	Addr bmail.Address
+	PubKey ed25519.PublicKey
+	PrivKey ed25519.PrivateKey
 }
 
 var (
@@ -19,19 +25,6 @@ var (
 	serverWalletInstLock sync.Mutex
 )
 
-func NewAddr() []byte  {
-	sn := make([]byte, 32)
-
-	for {
-		n, _ := rand.Read(sn)
-		if n != len(sn) {
-			continue
-		}
-		break
-	}
-
-	return sn
-}
 
 func (sw *ServerWallet)BCAddress() bmail.Address  {
 	return sw.Addr
@@ -39,7 +32,10 @@ func (sw *ServerWallet)BCAddress() bmail.Address  {
 
 func NewWallet() ServerWalletIntf {
 	sw:=&ServerWallet{}
-	sw.Addr = bmail.ToAddress(NewAddr())
+	cfg:=config.GetBMSCfg()
+	sw.Addr = bmail.ToAddress(cfg.PubKey)
+	sw.PubKey = cfg.PubKey
+	sw.PrivKey = cfg.PrivKey
 
 	return sw
 
@@ -59,3 +55,6 @@ func GetServerWallet() ServerWalletIntf{
 
 
 
+func (sw *ServerWallet)Sign(message []byte) []byte{
+	return bmailcrypt.Sign(sw.PrivKey,message)
+}

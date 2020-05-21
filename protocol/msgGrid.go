@@ -2,80 +2,21 @@ package protocol
 
 import (
 	"github.com/BASChain/go-bmail-protocol/translayer"
-	"github.com/BASChain/go-bmail-protocol/bmp"
-	"encoding/json"
-
-	"crypto/rand"
 )
 
-type MsgBody interface {
+type RBody interface {
 	UnPack(data []byte) error
+	Verify() bool
 	//Save2DB()	error
-	Response() (*bmp.EnvelopeAck,error)
+	Response() (WBody,error)
 }
 
-
-type CryptEnvelopeMsg struct {
-	EpSyn *bmp.EnvelopeSyn
-	CryptEp *bmp.CryptEnvelope
-	RawEp *bmp.RawEnvelope
-	EpAck *bmp.EnvelopeAck
+type WBody interface {
+	MsgType() uint16
+	GetBytes() ([]byte,error)
 }
 
-func (cem *CryptEnvelopeMsg)UnPack(data []byte) error  {
-	cem.EpSyn = &bmp.EnvelopeSyn{}
-	cem.EpSyn.Env = &bmp.CryptEnvelope{}
-	if err:=json.Unmarshal(data,cem.EpSyn);err!=nil{
-		return err
-	}
-
-	cem.CryptEp = cem.EpSyn.Env.(*bmp.CryptEnvelope)
-
-	return nil
-}
-//
-//func (cem *CryptEnvelopeMsg)Verify() bool  {
-//	//todo
-//
-//	return true
-//}
-
-
-//func (cem *CryptEnvelopeMsg)Save2DB() error  {
-//	//todo...
-//
-//	return nil
-//}
-
-func newSn() []byte  {
-	sn := make([]byte, 16)
-
-	for {
-		n, _ := rand.Read(sn)
-		if n != len(sn) {
-			continue
-		}
-		break
-	}
-
-	return sn
-}
-
-func (cem *CryptEnvelopeMsg)Response() (*bmp.EnvelopeAck,error){
-	ack:=&bmp.EnvelopeAck{}
-	copy(ack.NextSN[:],newSn())
-	ack.Hash = cem.EpSyn.Hash
-	ack.Sig = newSn()
-
-	cem.EpAck = ack
-
-	return ack,nil
-
-}
-
-
-
-var MsgGrid = map[uint16]MsgBody{
+var MsgGrid = map[uint16]RBody{
 	translayer.SEND_CRYPT_ENVELOPE:&CryptEnvelopeMsg{},
 }
 
