@@ -2,14 +2,11 @@ package tools
 
 import "crypto/rand"
 
-
 const (
 	SerialNumberLength int = 16
 )
 
-
-
-func NewSn(bytesCnt int) []byte  {
+func NewSn(bytesCnt int) []byte {
 	sn := make([]byte, bytesCnt)
 
 	for {

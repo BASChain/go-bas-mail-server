@@ -1,13 +1,13 @@
 package config
 
 import (
+	"crypto/ed25519"
 	"encoding/json"
 	"github.com/kprc/nbsnetwork/tools"
 	"log"
 	"os"
 	"path"
 	"sync"
-	"crypto/ed25519"
 )
 
 const (
@@ -16,22 +16,21 @@ const (
 )
 
 type BMSConfig struct {
-	MgtHttpPort   int             `json:"mgthttpport"`
-	KeyPath       string          `json:"keypath"`
-	CmdListenPort string          `json:"cmdlistenport"`
+	MgtHttpPort   int                `json:"mgthttpport"`
+	KeyPath       string             `json:"keypath"`
+	CmdListenPort string             `json:"cmdlistenport"`
 	PrivKey       ed25519.PrivateKey `json:"-"`
 	PubKey        ed25519.PublicKey  `json:"-"`
-	RemoteServer  string          `json:"remoteserver"`
-	PKStorePath   string          `json:"publickeypath"`
-	SSListenPort  int             `json:"sslistenport"`
+	RemoteServer  string             `json:"remoteserver"`
+	PKStorePath   string             `json:"publickeypath"`
+	SSListenPort  int                `json:"sslistenport"`
 
-	DbPath		string 			 `json:"dbpath"`
-	BMailMetaDb string           `json:"bmailmetadb"`
-	BMServerMetaDb string        `json:"bmservermetadb"`
-	BMTransferDb string          `json:"bmtransferdb"`
-	BMBlackListdb  string          `json:"bmblacklist"`
-	BMAttachDb   string `json:"bmattachdb"`
-
+	DbPath         string `json:"dbpath"`
+	BMailMetaDb    string `json:"bmailmetadb"`
+	BMServerMetaDb string `json:"bmservermetadb"`
+	BMTransferDb   string `json:"bmtransferdb"`
+	BMBlackListdb  string `json:"bmblacklist"`
+	BMAttachDb     string `json:"bmattachdb"`
 }
 
 var (
@@ -190,37 +189,35 @@ func (bc *BMSConfig) GetKeyPath() string {
 
 }
 
-func (bc *BMSConfig)GetPKPath() string  {
-	return path.Join(GetBMSHomeDir(),bc.PKStorePath)
+func (bc *BMSConfig) GetPKPath() string {
+	return path.Join(GetBMSHomeDir(), bc.PKStorePath)
 }
 
-func (bc *BMSConfig)GetDbPath() string  {
-	dbpath := path.Join(GetBMSHomeDir(),bc.DbPath)
-	if !tools.FileExists(dbpath){
+func (bc *BMSConfig) GetDbPath() string {
+	dbpath := path.Join(GetBMSHomeDir(), bc.DbPath)
+	if !tools.FileExists(dbpath) {
 		os.MkdirAll(dbpath, 0755)
 	}
 
 	return dbpath
 }
 
-func (bc *BMSConfig)GetBMMSavePath() string  {
-	return path.Join(bc.GetDbPath(),bc.BMailMetaDb)
+func (bc *BMSConfig) GetBMMSavePath() string {
+	return path.Join(bc.GetDbPath(), bc.BMailMetaDb)
 }
 
-func (bc *BMSConfig)GetBMSMSavePath() string  {
-	return path.Join(bc.GetDbPath(),bc.BMServerMetaDb)
+func (bc *BMSConfig) GetBMSMSavePath() string {
+	return path.Join(bc.GetDbPath(), bc.BMServerMetaDb)
 }
 
-func (bc *BMSConfig)GetBMMLSavePath() string  {
-	return path.Join(bc.GetDbPath(),bc.BMBlackListdb)
+func (bc *BMSConfig) GetBMMLSavePath() string {
+	return path.Join(bc.GetDbPath(), bc.BMBlackListdb)
 }
 
-func (bc *BMSConfig)GetBMTransferSavePath() string  {
-	return path.Join(bc.GetDbPath(),bc.BMTransferDb)
+func (bc *BMSConfig) GetBMTransferSavePath() string {
+	return path.Join(bc.GetDbPath(), bc.BMTransferDb)
 }
 
-func (bc *BMSConfig)GetAttachmentSavePath() string  {
-	return path.Join(bc.GetDbPath(),bc.BMAttachDb)
+func (bc *BMSConfig) GetAttachmentSavePath() string {
+	return path.Join(bc.GetDbPath(), bc.BMAttachDb)
 }
-
-

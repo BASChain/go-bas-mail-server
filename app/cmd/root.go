@@ -49,7 +49,6 @@ var rootCmd = &cobra.Command{
 		cfg := config.GetBMSCfg()
 		cfg.Save()
 
-
 		//go bmtpserver.GetBMTPServer().StartTCPServer()
 
 		cmdservice.GetCmdServerInst().StartCmdService()

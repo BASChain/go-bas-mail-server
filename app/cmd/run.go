@@ -16,17 +16,17 @@ limitations under the License.
 package cmd
 
 import (
+	"github.com/BASChain/go-bas-mail-server/app/cmdclient"
+	"github.com/BASChain/go-bas-mail-server/app/cmdcommon"
 	"github.com/spf13/cobra"
 	"log"
-	"github.com/BASChain/go-bas-mail-server/app/cmdcommon"
-	"github.com/BASChain/go-bas-mail-server/app/cmdclient"
 )
 
 // runCmd represents the run command
 var runCmd = &cobra.Command{
 	Use:   "run",
 	Short: "start tcp server",
-	Long: `start tcp server`,
+	Long:  `start tcp server`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if _, err := cmdcommon.IsProcessStarted(); err != nil {
 			log.Println(err)

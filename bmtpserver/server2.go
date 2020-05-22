@@ -1,32 +1,32 @@
 package bmtpserver
 
 import (
-	"net"
-	"github.com/BASChain/go-bmail-protocol/translayer"
-	"sync"
-	"log"
-	"time"
-	"github.com/BASChain/go-bas-mail-server/wallet"
 	"fmt"
+	"github.com/BASChain/go-bas-mail-server/wallet"
+	"github.com/BASChain/go-bmail-protocol/translayer"
+	"log"
+	"net"
+	"sync"
+	"time"
 )
 
-type BMTPFunc func (*TcpSession) error
+type BMTPFunc func(*TcpSession) error
 
-var(
-	bmtpserverInst BMTPServerIntf
+var (
+	bmtpserverInst     BMTPServerIntf
 	bmtpserverInstLock sync.Mutex
 )
 
 type BMTPServerConf struct {
-	ListenPort int
-	SupportFunc map[int]BMTPFunc
+	ListenPort     int
+	SupportFunc    map[int]BMTPFunc
 	supportVersion []uint16
-	Session map[string]*TcpSession
-	listener *net.TCPListener
-	quit chan interface{}
-	wg sync.WaitGroup
-	timeout int
-	wallet wallet.ServerWalletIntf
+	Session        map[string]*TcpSession
+	listener       *net.TCPListener
+	quit           chan interface{}
+	wg             sync.WaitGroup
+	timeout        int
+	wallet         wallet.ServerWalletIntf
 }
 
 type BMTPServerIntf interface {
@@ -36,26 +36,26 @@ type BMTPServerIntf interface {
 	SupportVersion() []uint16
 }
 
-func NewServer2() BMTPServerIntf  {
-	server:=&BMTPServerConf{}
+func NewServer2() BMTPServerIntf {
+	server := &BMTPServerConf{}
 
 	server.ListenPort = translayer.BMTP_PORT
 	server.quit = make(chan interface{})
 	server.SupportFunc = make(map[int]BMTPFunc)
 	server.SupportFunc[int(translayer.BMAILVER1)] = HandleMsgV1
 	server.Session = make(map[string]*TcpSession)
-	server.quit = make(chan interface{},1)
+	server.quit = make(chan interface{}, 1)
 	server.timeout = 10 //second
 	server.wallet = wallet.GetServerWallet()
 
 	return server
 }
 
-func GetBMTPServer()  BMTPServerIntf {
-	if bmtpserverInst == nil{
+func GetBMTPServer() BMTPServerIntf {
+	if bmtpserverInst == nil {
 		bmtpserverInstLock.Lock()
 		bmtpserverInstLock.Unlock()
-		if bmtpserverInst == nil{
+		if bmtpserverInst == nil {
 			bmtpserverInst = NewServer2()
 		}
 	}
@@ -63,20 +63,19 @@ func GetBMTPServer()  BMTPServerIntf {
 	return bmtpserverInst
 }
 
-
-func (s *BMTPServerConf)VersionInSrv(version int) bool {
-	if _,ok:=s.SupportFunc[version];!ok{
+func (s *BMTPServerConf) VersionInSrv(version int) bool {
+	if _, ok := s.SupportFunc[version]; !ok {
 		return false
-	}else{
+	} else {
 		return true
 	}
 }
 
-func (s *BMTPServerConf)SupportVersion() []uint16 {
-	if s.supportVersion == nil{
-		i:=0
-		for k,_:=range s.SupportFunc{
-			s.supportVersion = append(s.supportVersion ,uint16(k))
+func (s *BMTPServerConf) SupportVersion() []uint16 {
+	if s.supportVersion == nil {
+		i := 0
+		for k, _ := range s.SupportFunc {
+			s.supportVersion = append(s.supportVersion, uint16(k))
 			i++
 		}
 	}
@@ -84,12 +83,11 @@ func (s *BMTPServerConf)SupportVersion() []uint16 {
 	return s.supportVersion
 }
 
+func (s *BMTPServerConf) StartTCPServer() error {
+	laddr := &net.TCPAddr{IP: net.ParseIP("0.0.0.0"), Port: s.ListenPort}
 
-func (s *BMTPServerConf)StartTCPServer() error  {
-	laddr:=&net.TCPAddr{IP:net.ParseIP("0.0.0.0"),Port:s.ListenPort}
-
-	l,err:=net.ListenTCP("tcp4",laddr)
-	if err!=nil{
+	l, err := net.ListenTCP("tcp4", laddr)
+	if err != nil {
 		return err
 	}
 
@@ -105,7 +103,7 @@ func (s *BMTPServerConf)StartTCPServer() error  {
 	return nil
 }
 
-func (s *BMTPServerConf)serve()  {
+func (s *BMTPServerConf) serve() {
 	defer s.wg.Done()
 
 	for {
@@ -128,22 +126,21 @@ func (s *BMTPServerConf)serve()  {
 
 }
 
-func (s *BMTPServerConf)handleConnect(conn *net.TCPConn)  {
-	raddrstr:=conn.RemoteAddr().String()
+func (s *BMTPServerConf) handleConnect(conn *net.TCPConn) {
+	raddrstr := conn.RemoteAddr().String()
 
 	defer func(raddr string) {
 		conn.Close()
-		delete(s.Session,raddr)
+		delete(s.Session, raddr)
 	}(raddrstr)
 
-	ac:=&TcpSession{}
+	ac := &TcpSession{}
 	ac.conn = conn
 	ac.server = s
 
 	s.Session[raddrstr] = ac
 
-
-	if err:=ac.Negotiation();err!=nil{
+	if err := ac.Negotiation(); err != nil {
 		fmt.Println(err)
 		return
 	}
@@ -153,7 +150,7 @@ func (s *BMTPServerConf)handleConnect(conn *net.TCPConn)  {
 		case <-s.quit:
 			return
 		default:
-			if err:=ac.Handle(ac);err!=nil{
+			if err := ac.Handle(ac); err != nil {
 				fmt.Println(err)
 				return
 			}
@@ -162,10 +159,8 @@ func (s *BMTPServerConf)handleConnect(conn *net.TCPConn)  {
 	}
 }
 
-
-
-func (s *BMTPServerConf)StopTCPServer()  {
-	for _,c:=range s.Session{
+func (s *BMTPServerConf) StopTCPServer() {
+	for _, c := range s.Session {
 		c.conn.Close()
 	}
 	s.listener.Close()
@@ -173,6 +168,3 @@ func (s *BMTPServerConf)StopTCPServer()  {
 
 	return
 }
-
-
-

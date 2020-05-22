@@ -12,8 +12,8 @@ import (
 
 	"github.com/BASChain/go-bas-mail-server/app/cmdpb"
 	"github.com/BASChain/go-bas-mail-server/app/cmdservice/api"
-	"github.com/BASChain/go-bas-mail-server/config"
 	"github.com/BASChain/go-bas-mail-server/bmtpserver"
+	"github.com/BASChain/go-bas-mail-server/config"
 )
 
 type cmdServer struct {

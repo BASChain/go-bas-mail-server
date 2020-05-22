@@ -44,7 +44,6 @@ var daemonCmd = &cobra.Command{
 		cfg := config.GetBMSCfg()
 		cfg.Save()
 
-
 		daemondir := config.GetBMSHomeDir()
 		cntxt := daemon.Context{
 			PidFileName: path.Join(daemondir, "bms.pid"),
@@ -84,8 +83,6 @@ func init() {
 	// is called directly, e.g.:
 	// daemonCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-
 	daemonCmd.Flags().StringVarP(&cmdconfigfilename, "config-file-name", "c", "", "configuration file name")
-
 
 }

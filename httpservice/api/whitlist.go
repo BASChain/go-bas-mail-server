@@ -13,10 +13,10 @@ import (
 	"github.com/BASChain/go-bas-mail-server/instdb"
 	"github.com/BASChain/go-bas-mail-server/kvdb"
 	"github.com/BASChain/go-bas-mail-server/rsakey"
-	"os/exec"
-	"strings"
 	"log"
+	"os/exec"
 	"strconv"
+	"strings"
 )
 
 type WhiteList struct {
@@ -71,7 +71,7 @@ func (wl *WhiteList) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		resp = Step1(req)
 		if resp == nil {
-			log.Println("reponse step 1 failed",string(body))
+			log.Println("reponse step 1 failed", string(body))
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "{}")
 			return
@@ -103,7 +103,7 @@ func (wl *WhiteList) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		if ipold == "" || ipold != ipn {
 
-			err := changeWhitIP(k,ipold, ipn)
+			err := changeWhitIP(k, ipold, ipn)
 			if err == nil {
 				pkdb.Update(k, ipn)
 			}
@@ -126,7 +126,7 @@ func (wl *WhiteList) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func changeWhitIP(key,oldip string, newip string) error {
+func changeWhitIP(key, oldip string, newip string) error {
 	pkdb := instdb.GetPKDB()
 
 	type ChgIPs struct {
@@ -154,53 +154,52 @@ func changeWhitIP(key,oldip string, newip string) error {
 			chg.addnew = false
 		}
 
-		if chg.oldip != "" && k.(string)!=key && dbv.GetData() == chg.oldip {
+		if chg.oldip != "" && k.(string) != key && dbv.GetData() == chg.oldip {
 			chg.delold = false
 		}
 	})
 
-
 	if c.addnew {
-		cmd := exec.Command("/bin/sh","-c",
-							"/usr/bin/python2 -Es"+
-							" /usr/bin/firewall-cmd "+
-							"--permanent "+
-							"--add-rich-rule='rule family=\"ipv4\" source address=\""+
-							newip+
-							"\" port port=\""+
-							strconv.Itoa(config.GetBMSCfg().SSListenPort)+
-							"\" protocol=\"tcp\" accept'")
+		cmd := exec.Command("/bin/sh", "-c",
+			"/usr/bin/python2 -Es"+
+				" /usr/bin/firewall-cmd "+
+				"--permanent "+
+				"--add-rich-rule='rule family=\"ipv4\" source address=\""+
+				newip+
+				"\" port port=\""+
+				strconv.Itoa(config.GetBMSCfg().SSListenPort)+
+				"\" protocol=\"tcp\" accept'")
 		err := cmd.Run()
 		if err != nil {
-			log.Println("add",err)
+			log.Println("add", err)
 			return err
 		}
 	}
 
 	if c.delold {
-		cmd := exec.Command("/bin/sh","-c",
-							"/usr/bin/python2 -Es "+
-							"/usr/bin/firewall-cmd "+
-							"--permanent "+
-							"--remove-rich-rule='rule family=\"ipv4\" source address=\""+
-							oldip+
-							"\" port port=\""+
-							strconv.Itoa(config.GetBMSCfg().SSListenPort)+
-							"\" protocol=\"tcp\" accept'")
+		cmd := exec.Command("/bin/sh", "-c",
+			"/usr/bin/python2 -Es "+
+				"/usr/bin/firewall-cmd "+
+				"--permanent "+
+				"--remove-rich-rule='rule family=\"ipv4\" source address=\""+
+				oldip+
+				"\" port port=\""+
+				strconv.Itoa(config.GetBMSCfg().SSListenPort)+
+				"\" protocol=\"tcp\" accept'")
 		err := cmd.Run()
 		if err != nil {
-			log.Println("del",err)
+			log.Println("del", err)
 			return nil
 		}
 	}
 
-	if c.addnew || c.delold{
-		cmd := exec.Command("/bin/sh","-c",
-							"/usr/bin/python2 -Es "+
-							"/usr/bin/firewall-cmd --reload")
+	if c.addnew || c.delold {
+		cmd := exec.Command("/bin/sh", "-c",
+			"/usr/bin/python2 -Es "+
+				"/usr/bin/firewall-cmd --reload")
 		err := cmd.Run()
 		if err != nil {
-			log.Println("reload",err)
+			log.Println("reload", err)
 			return nil
 		}
 	}

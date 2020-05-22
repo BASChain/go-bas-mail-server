@@ -16,15 +16,16 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/spf13/cobra"
-	"log"
+	"errors"
+	"github.com/BASChain/go-bas-mail-server/app/cmdclient"
 	"github.com/BASChain/go-bas-mail-server/app/cmdcommon"
 	"github.com/BASChain/go-bas-mail-server/bmailcrypt"
 	"github.com/howeyc/gopass"
+	"github.com/spf13/cobra"
+	"log"
 	"os"
-	"errors"
-	"github.com/BASChain/go-bas-mail-server/app/cmdclient"
 )
+
 var keypassword string
 
 func inputpassword() (password string, err error) {
@@ -55,7 +56,7 @@ func inputChoose() (choose string, err error) {
 var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "create account",
-	Long: `create account`,
+	Long:  `create account`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if _, err := cmdcommon.IsProcessStarted(); err != nil {

@@ -5,8 +5,8 @@ import (
 	"github.com/BASChain/go-bas-mail-server/app/cmdcommon"
 	"github.com/BASChain/go-bas-mail-server/app/cmdpb"
 	"github.com/BASChain/go-bas-mail-server/bmailcrypt"
-	"github.com/BASChain/go-bmail-account"
 	"github.com/BASChain/go-bas-mail-server/config"
+	"github.com/BASChain/go-bmail-account"
 )
 
 type CmdStringOPSrv struct {
@@ -31,26 +31,24 @@ func (cso *CmdStringOPSrv) StringOpDo(cxt context.Context, so *cmdpb.StringOP) (
 	return encapResp(msg), nil
 }
 
-func createAccount(passwd string) string  {
+func createAccount(passwd string) string {
 	err := bmailcrypt.GenEd25519KeyAndSave(passwd)
-	if err!=nil{
+	if err != nil {
 		return "create account failed"
 	}
 
 	bmailcrypt.LoadKey(passwd)
 
-	addr:=bmail.ToAddress(config.GetBMSCfg().PubKey).String()
+	addr := bmail.ToAddress(config.GetBMSCfg().PubKey).String()
 
-	return "Address: "+ addr
+	return "Address: " + addr
 }
 
-
-func loadAccount(passwd string) string  {
+func loadAccount(passwd string) string {
 
 	bmailcrypt.LoadKey(passwd)
 
-	addr:=bmail.ToAddress(config.GetBMSCfg().PubKey).String()
+	addr := bmail.ToAddress(config.GetBMSCfg().PubKey).String()
 
-	return "load account success! \r\nAddress: "+ addr
+	return "load account success! \r\nAddress: " + addr
 }
-

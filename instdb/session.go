@@ -1,12 +1,12 @@
 package instdb
 
 import (
-	"github.com/BASChain/go-bas-mail-server/kvdb"
-	"sync"
 	"crypto/rand"
+	"github.com/BASChain/go-bas-mail-server/kvdb"
 	"github.com/btcsuite/btcutil/base58"
 	"github.com/kprc/nbsnetwork/tools"
 	"github.com/pkg/errors"
+	"sync"
 	"time"
 )
 
@@ -114,15 +114,14 @@ func FindSession(sess *Session) (r *Session, err error) {
 	}
 }
 
-func DelSession(sess *Session)  {
-	if sess == nil{
+func DelSession(sess *Session) {
+	if sess == nil {
 		return
 	}
 	store := GetSessionDB()
 
 	store.DelK(sess.sn)
 }
-
 
 func SessionTimeOut() {
 	sesswg.Add(1)
@@ -134,7 +133,7 @@ func SessionTimeOut() {
 		curtime int64
 	}
 
-	lasttime:=tools.GetNowMsTime()
+	lasttime := tools.GetNowMsTime()
 
 	for {
 		select {
@@ -144,9 +143,9 @@ func SessionTimeOut() {
 			//nothing to do
 		}
 
-		curtime:=tools.GetNowMsTime()
+		curtime := tools.GetNowMsTime()
 
-		if curtime-lasttime <30000{
+		if curtime-lasttime < 30000 {
 			continue
 		}
 

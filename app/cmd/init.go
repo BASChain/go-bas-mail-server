@@ -16,20 +16,15 @@ limitations under the License.
 package cmd
 
 import (
-
 	"github.com/BASChain/go-bas-mail-server/app/cmdcommon"
 	"github.com/BASChain/go-bas-mail-server/config"
 
-
 	"github.com/spf13/cobra"
 	"log"
-
 )
 
 //var keypassword string
 var remoteserver string
-
-
 
 // initCmd represents the init command
 var initCmd = &cobra.Command{
@@ -47,7 +42,6 @@ var initCmd = &cobra.Command{
 
 		InitCfg()
 
-
 		cfg := config.GetBMSCfg()
 		cfg.RemoteServer = remoteserver
 
@@ -58,7 +52,6 @@ var initCmd = &cobra.Command{
 		//log.Println("Init success!, Public key: ", s58)
 	},
 }
-
 
 func init() {
 	rootCmd.AddCommand(initCmd)

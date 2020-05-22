@@ -8,21 +8,15 @@ type RBody interface {
 	UnPack(data []byte) error
 	Verify() bool
 	SetCurrentSn(sn []byte)
-	Save2DB()	error
-	Response() (WBody,error)
+	Save2DB() error
+	Response() (WBody, error)
 }
 
 type WBody interface {
 	MsgType() uint16
-	GetBytes() ([]byte,error)
+	GetBytes() ([]byte, error)
 }
 
 var MsgGrid = map[uint16]RBody{
-	translayer.SEND_CRYPT_ENVELOPE:&CryptEnvelopeMsg{},
+	translayer.SEND_CRYPT_ENVELOPE: &CryptEnvelopeMsg{},
 }
-
-
-
-
-
-

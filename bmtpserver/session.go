@@ -3,101 +3,96 @@ package bmtpserver
 import (
 	"net"
 
+	"errors"
+	"fmt"
+	"github.com/BASChain/go-bas-mail-server/protocol"
+	"github.com/BASChain/go-bas-mail-server/tools"
+	"github.com/BASChain/go-bmail-protocol/bmp"
+	"github.com/BASChain/go-bmail-protocol/translayer"
 	"io"
 	"log"
-	"errors"
-	"github.com/BASChain/go-bmail-protocol/translayer"
-	"github.com/BASChain/go-bmail-protocol/bmp"
 	"strconv"
-	"github.com/BASChain/go-bas-mail-server/protocol"
-	"fmt"
-	"github.com/BASChain/go-bas-mail-server/tools"
 )
 
-
 type TcpSession struct {
-	sn []byte
-	pubkey []byte
-	conn *net.TCPConn
-	Handle BMTPFunc
-	size int
-	server *BMTPServerConf
+	sn      []byte
+	pubkey  []byte
+	conn    *net.TCPConn
+	Handle  BMTPFunc
+	size    int
+	server  *BMTPServerConf
 	version int
-	buf []byte
-	bmtl *translayer.BMTransLayer
-	rbody protocol.RBody
-	wbody protocol.WBody
+	buf     []byte
+	bmtl    *translayer.BMTransLayer
+	rbody   protocol.RBody
+	wbody   protocol.WBody
 }
 
-
-
-func (ts *TcpSession)Negotiation() error  {
-	if err:=ts.readHead();err!=nil{
+func (ts *TcpSession) Negotiation() error {
+	if err := ts.readHead(); err != nil {
 		return err
 	}
 
-	support:=ts.server.VersionInSrv(int(ts.bmtl.GetVersion()))
+	support := ts.server.VersionInSrv(int(ts.bmtl.GetVersion()))
 
-	ack:=&bmp.HELOACK{}
+	ack := &bmp.HELOACK{}
 
-	if support == false{
+	if support == false {
 		ack.ErrCode = 1
 		ack.SupportVersion = ts.server.SupportVersion()
-	}else{
+	} else {
 		ack.ErrCode = 0
 		ts.sn = tools.NewSn(tools.SerialNumberLength)
-		copy(ack.SN[:],ts.sn)
+		copy(ack.SN[:], ts.sn)
 		ack.SrvBca = ts.server.wallet.BCAddress()
 	}
 
 	ts.wbody = ack
 
-	if err:=ts.WriteMsg();err!=nil{
+	if err := ts.WriteMsg(); err != nil {
 		return err
 	}
 
-	if support{
-		fmt.Println("version",ts.bmtl.GetVersion())
+	if support {
+		fmt.Println("version", ts.bmtl.GetVersion())
 		ts.Handle = ts.server.SupportFunc[int(ts.bmtl.GetVersion())]
 		return nil
-	}else{
-		return errors.New("client version is not support, ver: "+strconv.Itoa(int(ts.bmtl.GetVersion())))
+	} else {
+		return errors.New("client version is not support, ver: " + strconv.Itoa(int(ts.bmtl.GetVersion())))
 	}
 
 }
 
-func (ts *TcpSession)WriteMsg() error {
-	bmtl:=translayer.NewBMTL(ts.wbody.MsgType())
+func (ts *TcpSession) WriteMsg() error {
+	bmtl := translayer.NewBMTL(ts.wbody.MsgType())
 
-	buf,err:=ts.wbody.GetBytes()
-	if err!=nil{
+	buf, err := ts.wbody.GetBytes()
+	if err != nil {
 		return err
 	}
 
 	bmtl.SetDataLen(uint32(len(buf)))
 
-	data,_:=bmtl.Pack()
+	data, _ := bmtl.Pack()
 
 	var n int
-	n,err = ts.conn.Write(data)
-	if err!=nil || n != len(data){
-		return errors.New("Write "+strconv.Itoa(int(ts.wbody.MsgType()))+" message head Failed")
+	n, err = ts.conn.Write(data)
+	if err != nil || n != len(data) {
+		return errors.New("Write " + strconv.Itoa(int(ts.wbody.MsgType())) + " message head Failed")
 	}
 
-	n,err = ts.conn.Write(buf)
-	if err!=nil || n != len(buf){
-		return errors.New("Write "+strconv.Itoa(int(ts.wbody.MsgType()))+" message body Failed")
+	n, err = ts.conn.Write(buf)
+	if err != nil || n != len(buf) {
+		return errors.New("Write " + strconv.Itoa(int(ts.wbody.MsgType())) + " message body Failed")
 	}
 
 	return nil
 }
 
-
-
-func (ts *TcpSession)readNext() (error)  {
-	buf:=make([]byte,ts.size)
-	for{
-		n,err := ts.conn.Read(buf)
+func (ts *TcpSession) readNext() error {
+	buf := make([]byte, ts.size)
+	for {
+		n, err := ts.conn.Read(buf)
 		if err != nil {
 			if opErr, ok := err.(*net.OpError); ok && opErr.Timeout() {
 				continue
@@ -116,52 +111,52 @@ func (ts *TcpSession)readNext() (error)  {
 	}
 }
 
-func (ts *TcpSession)deriveHead() (*translayer.BMTransLayer,error) {
-	if len(ts.buf) != translayer.BMHeadSize(){
-		return nil,errors.New("data is not a header buffer")
+func (ts *TcpSession) deriveHead() (*translayer.BMTransLayer, error) {
+	if len(ts.buf) != translayer.BMHeadSize() {
+		return nil, errors.New("data is not a header buffer")
 	}
 
-	bmtl:=&translayer.BMTransLayer{}
+	bmtl := &translayer.BMTransLayer{}
 
-	_,err:=bmtl.UnPack(ts.buf)
-	if err!=nil{
-		return nil,err
+	_, err := bmtl.UnPack(ts.buf)
+	if err != nil {
+		return nil, err
 	}
 
-	return bmtl,nil
+	return bmtl, nil
 
 }
 
-func (ts *TcpSession)deriveBody() error {
+func (ts *TcpSession) deriveBody() error {
 	ts.rbody = protocol.MsgGrid[ts.bmtl.GetMsgType()]
 	return ts.rbody.UnPack(ts.buf)
 }
 
-func (ts *TcpSession)readHead() error  {
+func (ts *TcpSession) readHead() error {
 	ts.size = translayer.BMHeadSize()
 
-	if err := ts.readNext(); err!=nil{
+	if err := ts.readNext(); err != nil {
 		return err
 	}
 
-	if head,err:=ts.deriveHead();err!=nil{
+	if head, err := ts.deriveHead(); err != nil {
 		return err
-	}else{
+	} else {
 		ts.bmtl = head
 		ts.size = int(head.GetDataLen())
 		return nil
 	}
 }
 
-func (ts *TcpSession)readBody() error  {
-	if ts.bmtl == nil || ts.size == 0{
+func (ts *TcpSession) readBody() error {
+	if ts.bmtl == nil || ts.size == 0 {
 		return errors.New("please read message header first")
 	}
 
-	if err:=ts.readNext();err!=nil{
+	if err := ts.readNext(); err != nil {
 		return err
-	}else{
-		if err:=ts.deriveBody();err!=nil{
+	} else {
+		if err := ts.deriveBody(); err != nil {
 			return err
 		}
 	}
@@ -169,38 +164,34 @@ func (ts *TcpSession)readBody() error  {
 	return nil
 }
 
-
-func HandleMsgV1(ts *TcpSession) error  {
-	if err:=ts.readHead();err!=nil{
+func HandleMsgV1(ts *TcpSession) error {
+	if err := ts.readHead(); err != nil {
 		return err
 	}
 
-	if err:=ts.readBody();err!=nil{
+	if err := ts.readBody(); err != nil {
 		return err
 	}
 	ts.rbody.SetCurrentSn(ts.sn)
 
-
-	if !ts.rbody.Verify(){
+	if !ts.rbody.Verify() {
 		return errors.New("error")
 	}
 
-	if resp,err:=ts.rbody.Response();err!=nil{
+	if resp, err := ts.rbody.Response(); err != nil {
 		ts.wbody = resp
 		ts.WriteMsg()
 		return err
-	}else{
+	} else {
 		ts.wbody = resp
-		if err:=ts.WriteMsg();err!=nil{
+		if err := ts.WriteMsg(); err != nil {
 			return err
 		}
 	}
-	if err:=ts.rbody.Save2DB();err!=nil{
+	if err := ts.rbody.Save2DB(); err != nil {
 		return err
 	}
-
 
 	return nil
 
 }
-

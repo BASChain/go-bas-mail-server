@@ -1,11 +1,11 @@
 package wallet
 
 import (
-	"github.com/BASChain/go-bmail-account"
-	"sync"
-	"github.com/BASChain/go-bas-mail-server/config"
 	"crypto/ed25519"
 	"github.com/BASChain/go-bas-mail-server/bmailcrypt"
+	"github.com/BASChain/go-bas-mail-server/config"
+	"github.com/BASChain/go-bmail-account"
+	"sync"
 )
 
 type ServerWalletIntf interface {
@@ -15,24 +15,23 @@ type ServerWalletIntf interface {
 }
 
 type ServerWallet struct {
-	Addr bmail.Address
-	PubKey ed25519.PublicKey
+	Addr    bmail.Address
+	PubKey  ed25519.PublicKey
 	PrivKey ed25519.PrivateKey
 }
 
 var (
-	serverWalletInst ServerWalletIntf
+	serverWalletInst     ServerWalletIntf
 	serverWalletInstLock sync.Mutex
 )
 
-
-func (sw *ServerWallet)BCAddress() bmail.Address  {
+func (sw *ServerWallet) BCAddress() bmail.Address {
 	return sw.Addr
 }
 
 func NewWallet() ServerWalletIntf {
-	sw:=&ServerWallet{}
-	cfg:=config.GetBMSCfg()
+	sw := &ServerWallet{}
+	cfg := config.GetBMSCfg()
 	sw.Addr = bmail.ToAddress(cfg.PubKey)
 	sw.PubKey = cfg.PubKey
 	sw.PrivKey = cfg.PrivKey
@@ -41,11 +40,11 @@ func NewWallet() ServerWalletIntf {
 
 }
 
-func GetServerWallet() ServerWalletIntf{
-	if serverWalletInst == nil{
+func GetServerWallet() ServerWalletIntf {
+	if serverWalletInst == nil {
 		serverWalletInstLock.Lock()
 		defer serverWalletInstLock.Unlock()
-		if serverWalletInst == nil{
+		if serverWalletInst == nil {
 			serverWalletInst = NewWallet()
 		}
 	}
@@ -53,8 +52,6 @@ func GetServerWallet() ServerWalletIntf{
 	return serverWalletInst
 }
 
-
-
-func (sw *ServerWallet)Sign(message []byte) []byte{
-	return bmailcrypt.Sign(sw.PrivKey,message)
+func (sw *ServerWallet) Sign(message []byte) []byte {
+	return bmailcrypt.Sign(sw.PrivKey, message)
 }

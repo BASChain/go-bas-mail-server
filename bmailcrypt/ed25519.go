@@ -43,7 +43,6 @@ func KeyIsGenerated() bool {
 func LoadKey(password string) {
 	cfg := config.GetBMSCfg()
 
-
 	data, err := tools.OpenAndReadAll(cfg.GetKeyPath())
 	if err != nil {
 		log.Fatal("Load From key file error")
