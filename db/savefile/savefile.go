@@ -41,6 +41,10 @@ func Save2File(eid uuid.UUID, data []byte) error {
 		os.MkdirAll(filePath, 0755)
 	}
 
+	if tools.FileExists(fileName) {
+		return errors.New("file exists")
+	}
+
 	return tools.Save2File(data, fileName)
 
 }
