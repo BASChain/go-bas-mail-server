@@ -8,7 +8,7 @@ type RBody interface {
 	UnPack(data []byte) error
 	Verify() bool
 	SetCurrentSn(sn []byte)
-	Save2DB() error
+	Dispatch() error
 	Response() (WBody, error)
 }
 

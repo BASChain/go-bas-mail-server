@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/BASChain/go-bas-mail-server/bmailcrypt"
+	"github.com/BASChain/go-bas-mail-server/db/bmaildb"
+	"github.com/BASChain/go-bas-mail-server/db/savefile"
 	"github.com/BASChain/go-bas-mail-server/tools"
 	"github.com/BASChain/go-bas-mail-server/wallet"
 	"github.com/BASChain/go-bmail-protocol/bmp"
@@ -56,8 +58,29 @@ func (cem *CryptEnvelopeMsg) SetCurrentSn(sn []byte) {
 	cem.Sn = sn
 }
 
-func (cem *CryptEnvelopeMsg) Save2DB() error {
-	//todo...
+func (cem *CryptEnvelopeMsg) Dispatch() error {
+
+	//save meta
+	mcdb := bmaildb.GetBMMailContentDb()
+	h := &(cem.CryptEp.EnvelopeHead)
+	if err := mcdb.Insert(h.Eid, h.From, h.FromAddr, h.To, h.ToAddr); err != nil {
+		return err
+	}
+
+	var size int
+
+	if data, err := json.Marshal(*cem.CryptEp); err != nil {
+		size = len(data)
+		savefile.Save2File(h.Eid, data)
+	}
+
+	smdb := bmaildb.GetBMSendMailDb()
+	smdb.Insert(h.FromAddr.String(), size, h.Eid)
+	pmdb := bmaildb.GetBMPullMailDb()
+	pmdb.Insert(h.ToAddr.String(), size, h.Eid)
+
+	mcdb.IncRef(h.Eid)
+	mcdb.IncRef(h.Eid)
 
 	return nil
 }

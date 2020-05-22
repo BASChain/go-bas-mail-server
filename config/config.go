@@ -25,12 +25,17 @@ type BMSConfig struct {
 	PKStorePath   string             `json:"publickeypath"`
 	SSListenPort  int                `json:"sslistenport"`
 
-	DbPath         string `json:"dbpath"`
-	BMailMetaDb    string `json:"bmailmetadb"`
-	BMServerMetaDb string `json:"bmservermetadb"`
-	BMTransferDb   string `json:"bmtransferdb"`
-	BMBlackListdb  string `json:"bmblacklist"`
-	BMAttachDb     string `json:"bmattachdb"`
+	DbPath          string `json:"dbpath"`
+	BMailMetaDb     string `json:"bmailmetadb"`
+	BMServerMetaDb  string `json:"bmservermetadb"`
+	BMTransferDb    string `json:"bmtransferdb"`
+	BMBlackListdb   string `json:"bmblacklist"`
+	BMAttachDb      string `json:"bmattachdb"`
+	BMSendMailDb    string `json:"bmsendmaildb"`
+	BMMailContentDb string `json:"bmmailcontentdb"`
+	BMPullMailDb    string `json:"bmpullmaildb"`
+
+	FileStorePath string `json:"filestorepath"`
 }
 
 var (
@@ -51,6 +56,10 @@ func (bc *BMSConfig) InitCfg() *BMSConfig {
 	bc.BMTransferDb = "bmtf.db"
 	bc.BMBlackListdb = "bmbl.db"
 	bc.BMAttachDb = "bmattch.db"
+	bc.BMSendMailDb = "sendmail.db"
+	bc.BMMailContentDb = "mailcontent.db"
+	bc.BMPullMailDb = "pullmail.db"
+	bc.FileStorePath = "mailstore"
 
 	return bc
 }
@@ -220,4 +229,25 @@ func (bc *BMSConfig) GetBMTransferSavePath() string {
 
 func (bc *BMSConfig) GetAttachmentSavePath() string {
 	return path.Join(bc.GetDbPath(), bc.BMAttachDb)
+}
+
+func (bc *BMSConfig) GetSendMailDBPath() string {
+	return path.Join(bc.GetDbPath(), bc.BMSendMailDb)
+}
+
+func (bc *BMSConfig) GetMailContentDBPath() string {
+	return path.Join(bc.GetDbPath(), bc.BMMailContentDb)
+}
+
+func (bc *BMSConfig) GetPullMailDbPath() string {
+	return path.Join(bc.GetDbPath(), bc.BMPullMailDb)
+}
+
+func (bc *BMSConfig) GetMailStorePath() string {
+	dbpath := path.Join(GetBMSHomeDir(), bc.FileStorePath)
+	if !tools.FileExists(dbpath) {
+		os.MkdirAll(dbpath, 0755)
+	}
+
+	return dbpath
 }

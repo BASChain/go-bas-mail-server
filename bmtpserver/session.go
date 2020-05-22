@@ -1,8 +1,6 @@
 package bmtpserver
 
 import (
-	"net"
-
 	"errors"
 	"fmt"
 	"github.com/BASChain/go-bas-mail-server/protocol"
@@ -11,6 +9,7 @@ import (
 	"github.com/BASChain/go-bmail-protocol/translayer"
 	"io"
 	"log"
+	"net"
 	"strconv"
 )
 
@@ -188,8 +187,8 @@ func HandleMsgV1(ts *TcpSession) error {
 			return err
 		}
 	}
-	if err := ts.rbody.Save2DB(); err != nil {
-		return err
+	if err := ts.rbody.Dispatch(); err != nil {
+		//todo...
 	}
 
 	return nil
