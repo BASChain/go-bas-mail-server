@@ -25,10 +25,6 @@ var (
 	serverWalletInstLock sync.Mutex
 )
 
-func (sw *ServerWallet) BCAddress() bmail.Address {
-	return sw.Addr
-}
-
 func NewWallet() ServerWalletIntf {
 	sw := &ServerWallet{}
 	cfg := config.GetBMSCfg()
@@ -54,4 +50,8 @@ func GetServerWallet() ServerWalletIntf {
 
 func (sw *ServerWallet) Sign(message []byte) []byte {
 	return bmailcrypt.Sign(sw.PrivKey, message)
+}
+
+func (sw *ServerWallet) BCAddress() bmail.Address {
+	return sw.Addr
 }
