@@ -13,6 +13,7 @@ import (
 	"github.com/BASChain/go-bas-mail-server/app/cmdpb"
 	"github.com/BASChain/go-bas-mail-server/app/cmdservice/api"
 	"github.com/BASChain/go-bas-mail-server/bmtpserver"
+	"github.com/BASChain/go-bas-mail-server/bpopserver"
 	"github.com/BASChain/go-bas-mail-server/config"
 )
 
@@ -86,6 +87,7 @@ func (cs *cmdServer) StopCmdService() {
 func stop() {
 
 	bmtpserver.GetBMTPServer().StopTCPServer()
+	bpopserver.GetBMTPServer().StopTCPServer()
 
 	GetCmdServerInst().StopCmdService()
 

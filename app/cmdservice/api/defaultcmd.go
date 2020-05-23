@@ -12,6 +12,7 @@ import (
 	"github.com/BASChain/go-bas-mail-server/app/cmdcommon"
 	"github.com/BASChain/go-bas-mail-server/app/cmdpb"
 	"github.com/BASChain/go-bas-mail-server/bmtpserver"
+	"github.com/BASChain/go-bas-mail-server/bpopserver"
 	"github.com/BASChain/go-bmail-account"
 	"github.com/BASChain/go-bmail-protocol/translayer"
 	"strconv"
@@ -88,6 +89,7 @@ func (cds *CmdDefaultServer) serverRun() (*cmdpb.DefaultResp, error) {
 	}
 
 	go bmtpserver.GetBMTPServer().StartTCPServer()
+	go bpopserver.GetBMTPServer().StartTCPServer()
 
 	return encapResp("bmtp server start at: " + strconv.Itoa(int(translayer.BMTP_PORT))), nil
 
