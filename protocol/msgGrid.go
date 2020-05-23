@@ -19,4 +19,5 @@ type WBody interface {
 
 var MsgGrid = map[uint16]RBody{
 	translayer.SEND_CRYPT_ENVELOPE: &CryptEnvelopeMsg{},
+	translayer.RETR:&CommandDownloadMsg{},
 }
