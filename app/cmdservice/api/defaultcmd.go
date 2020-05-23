@@ -16,6 +16,7 @@ import (
 	"github.com/BASChain/go-bmail-account"
 	"github.com/BASChain/go-bmail-protocol/translayer"
 	"strconv"
+	"sync"
 )
 
 type CmdDefaultServer struct {
@@ -82,14 +83,27 @@ func (cds *CmdDefaultServer) showAccout() (*cmdpb.DefaultResp, error) {
 	return encapResp("Account: " + bmail.ToAddress(cfg.PubKey).String()), nil
 }
 
+var (
+	runingFlag      bool
+	runningOnceLock sync.Mutex
+)
+
 func (cds *CmdDefaultServer) serverRun() (*cmdpb.DefaultResp, error) {
 
 	if config.GetBMSCfg().PubKey == nil || config.GetBMSCfg().PrivKey == nil {
 		return encapResp("bmtp need account"), nil
 	}
 
-	go bmtpserver.GetBMTPServer().StartTCPServer()
-	go bpopserver.GetBMTPServer().StartTCPServer()
+	if !runingFlag {
+		runningOnceLock.Lock()
+		defer runningOnceLock.Unlock()
+		if !runingFlag {
+			go bmtpserver.GetBMTPServer().StartTCPServer()
+			go bpopserver.GetBMTPServer().StartTCPServer()
+		}
+
+		runingFlag = true
+	}
 
 	return encapResp("bmtp server start at: " + strconv.Itoa(int(translayer.BMTP_PORT))), nil
 
