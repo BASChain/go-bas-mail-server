@@ -105,6 +105,9 @@ func (cds *CmdDefaultServer) serverRun() (*cmdpb.DefaultResp, error) {
 		runingFlag = true
 	}
 
-	return encapResp("bmtp server start at: " + strconv.Itoa(int(translayer.BMTP_PORT))), nil
+	msg := "bmtp server start at: " + strconv.Itoa(int(translayer.BMTP_PORT))
+	msg += "\r\nbpop server start at: " + strconv.Itoa(int(translayer.BPOP3))
+
+	return encapResp(msg), nil
 
 }
