@@ -48,3 +48,13 @@ func Save2File(eid uuid.UUID, data []byte) error {
 	return tools.Save2File(data, fileName)
 
 }
+
+func ReadFromFile(eid uuid.UUID) (data []byte, err error) {
+	_, fileName := DeriveFilePath(eid)
+
+	if !tools.FileExists(fileName) {
+		return nil, errors.New("file not exists")
+	}
+
+	return tools.OpenAndReadAll(fileName)
+}

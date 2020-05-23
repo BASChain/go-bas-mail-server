@@ -60,20 +60,26 @@ func (cem *CryptEnvelopeMsg) SetCurrentSn(sn []byte) {
 
 func (cem *CryptEnvelopeMsg) Dispatch() error {
 
+	var size int
+
+	h := &(cem.CryptEp.EnvelopeHead)
+
+	//save mail
+	if data, err := json.Marshal(*cem.CryptEp); err == nil {
+		size = len(data)
+		savefile.Save2File(h.Eid, data)
+	} else {
+		return err
+	}
+
 	//save meta
 	mcdb := bmaildb.GetBMMailContentDb()
-	h := &(cem.CryptEp.EnvelopeHead)
+
 	if err := mcdb.Insert(h.Eid, h.From, h.FromAddr, h.To, h.ToAddr); err != nil {
 		return err
 	}
 
-	var size int
-
-	if data, err := json.Marshal(*cem.CryptEp); err != nil {
-		size = len(data)
-		savefile.Save2File(h.Eid, data)
-	}
-
+	//save index
 	smdb := bmaildb.GetBMSendMailDb()
 	smdb.Insert(h.FromAddr.String(), size, h.Eid)
 	pmdb := bmaildb.GetBMPullMailDb()

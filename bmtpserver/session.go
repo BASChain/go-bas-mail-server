@@ -2,7 +2,6 @@ package bmtpserver
 
 import (
 	"errors"
-	"fmt"
 	"github.com/BASChain/go-bas-mail-server/protocol"
 	"github.com/BASChain/go-bas-mail-server/tools"
 	"github.com/BASChain/go-bmail-protocol/bmp"
@@ -53,7 +52,7 @@ func (ts *TcpSession) Negotiation() error {
 	}
 
 	if support {
-		fmt.Println("version", ts.bmtl.GetVersion())
+		//fmt.Println("version", ts.bmtl.GetVersion())
 		ts.Handle = ts.server.SupportFunc[int(ts.bmtl.GetVersion())]
 		return nil
 	} else {

@@ -36,10 +36,10 @@ type BMTPServerIntf interface {
 	SupportVersion() []uint16
 }
 
-func NewServer2() BMTPServerIntf {
+func NewServer2(listenport int) BMTPServerIntf {
 	server := &BMTPServerConf{}
 
-	server.ListenPort = translayer.BMTP_PORT
+	server.ListenPort = listenport
 	server.quit = make(chan interface{})
 	server.SupportFunc = make(map[int]BMTPFunc)
 	server.SupportFunc[int(translayer.BMAILVER1)] = HandleMsgV1
@@ -56,7 +56,7 @@ func GetBMTPServer() BMTPServerIntf {
 		bmtpserverInstLock.Lock()
 		bmtpserverInstLock.Unlock()
 		if bmtpserverInst == nil {
-			bmtpserverInst = NewServer2()
+			bmtpserverInst = NewServer2(translayer.BMTP_PORT)
 		}
 	}
 
