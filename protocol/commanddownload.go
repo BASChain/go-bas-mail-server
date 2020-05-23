@@ -102,7 +102,7 @@ func (cdm *CommandDownloadMsg) Response() (WBody, error) {
 
 	total := 0
 
-	for i := len(sm.Smi) - 1; i > 0; i-- {
+	for i := len(sm.Smi) - 1; i >= 0; i-- {
 		if sm.Smi[i].CreateTime < cdm.CmdDownload.BeforeTime {
 			cep, err := RecoverFromFile(sm.Smi[i].Eid)
 			if err != nil {
