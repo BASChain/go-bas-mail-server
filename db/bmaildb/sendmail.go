@@ -56,7 +56,7 @@ type SaveMail struct {
 	Smi       []*MailItem `json:"smi"`
 }
 
-func (smdb *BMSaveMailDb) Insert(owner string, size int, eid uuid.UUID,curTime int64) error {
+func (smdb *BMSaveMailDb) Insert(owner string, size int, eid uuid.UUID, curTime int64) error {
 	smdb.dbLock.Lock()
 	defer smdb.dbLock.Unlock()
 
@@ -79,7 +79,7 @@ func (smdb *BMSaveMailDb) Insert(owner string, size int, eid uuid.UUID,curTime i
 
 	smi := &MailItem{}
 
-	if curTime <= 0{
+	if curTime <= 0 {
 		curTime = tools.GetNowMsTime()
 	}
 

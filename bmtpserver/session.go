@@ -71,7 +71,7 @@ func (ts *TcpSession) WriteMsg() error {
 
 	bmtl.SetDataLen(uint32(len(buf)))
 
-	log.Println(len(buf),bmtl.GetDataLen())
+	log.Println(len(buf), bmtl.GetDataLen())
 
 	data, _ := bmtl.Pack()
 
@@ -86,7 +86,7 @@ func (ts *TcpSession) WriteMsg() error {
 		return errors.New("Write " + strconv.Itoa(int(ts.wbody.MsgType())) + " message body Failed")
 	}
 
-	log.Println("write buf:",string(buf))
+	log.Println("write buf:", string(buf))
 
 	return nil
 }

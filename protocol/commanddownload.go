@@ -11,9 +11,9 @@ import (
 	"github.com/BASChain/go-bmail-protocol/bmp"
 	"github.com/BASChain/go-bmail-protocol/bpop"
 	"github.com/BASChain/go-bmail-resolver"
+	"github.com/btcsuite/btcutil/base58"
 	"github.com/google/uuid"
 	"log"
-	"github.com/btcsuite/btcutil/base58"
 )
 
 type CommandDownloadMsg struct {
@@ -40,13 +40,13 @@ func (cdm *CommandDownloadMsg) UnPack(data []byte) error {
 
 func (cdm *CommandDownloadMsg) Verify() bool {
 	if bytes.Compare(cdm.Sn, cdm.CmdSyn.SN[:]) != 0 {
-		log.Println("sn not equals ",base58.Encode(cdm.Sn),base58.Encode(cdm.CmdSyn.SN[:]))
+		log.Println("sn not equals ", base58.Encode(cdm.Sn), base58.Encode(cdm.CmdSyn.SN[:]))
 		return false
 	}
 
 	addr, _ := resolver.NewEthResolver(true).BMailBCA(cdm.CmdDownload.MailAddr)
 	if addr != cdm.CmdDownload.Owner {
-		log.Println("addr not equals",addr,cdm.CmdDownload.Owner)
+		log.Println("addr not equals", addr, cdm.CmdDownload.Owner)
 		return false
 	}
 
@@ -107,7 +107,7 @@ func (cdm *CommandDownloadMsg) Response() (WBody, error) {
 
 	total := 0
 
-	if cdm.CmdDownload.Direction{
+	if cdm.CmdDownload.Direction {
 		for i := len(sm.Smi) - 1; i >= 0; i-- {
 			if sm.Smi[i].CreateTime >= cdm.CmdDownload.TimePivot {
 				continue
@@ -123,9 +123,9 @@ func (cdm *CommandDownloadMsg) Response() (WBody, error) {
 				break
 			}
 		}
-	}else{
-		for i:=0;i<len(sm.Smi);i++{
-			if sm.Smi[i].CreateTime <=cdm.CmdDownload.TimePivot {
+	} else {
+		for i := 0; i < len(sm.Smi); i++ {
+			if sm.Smi[i].CreateTime <= cdm.CmdDownload.TimePivot {
 				continue
 			}
 			cep, err := RecoverFromFile(sm.Smi[i].Eid)
