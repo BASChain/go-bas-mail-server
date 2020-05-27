@@ -10,6 +10,9 @@ import (
 	"github.com/BASChain/go-bas-mail-server/wallet"
 	"github.com/BASChain/go-bmail-protocol/bmp"
 	"github.com/BASChain/go-bmail-resolver"
+	"log"
+	"github.com/btcsuite/btcutil/base58"
+	"time"
 )
 
 type CryptEnvelopeMsg struct {
@@ -29,25 +32,32 @@ func (cem *CryptEnvelopeMsg) UnPack(data []byte) error {
 
 	cem.CryptEp = cem.EpSyn.Env.(*bmp.CryptEnvelope)
 
+	//rewrite server time in mail header
+	cem.CryptEp.EnvelopeHead.Date = time.Duration(time.Now().UnixNano()/1e6)
+
 	return nil
 }
 
 func (cem *CryptEnvelopeMsg) Verify() bool {
 	if bytes.Compare(cem.Sn, cem.EpSyn.SN[:]) != 0 {
+		log.Println("sn not equals ",base58.Encode(cem.Sn),base58.Encode(cem.EpSyn.SN[:]))
 		return false
 	}
 
 	addr, _ := resolver.NewEthResolver(true).BMailBCA(cem.CryptEp.EnvelopeHead.From)
 	if addr != cem.CryptEp.FromAddr {
+		log.Println("addr not equals",addr,cem.CryptEp.FromAddr)
 		return false
 	}
 
 	if !bmailcrypt.Verify(addr.ToPubKey(), cem.EpSyn.SN[:], cem.EpSyn.Sig) {
+		log.Println("verify signature failed")
 		return false
 	}
 
 	toaddr, _ := resolver.NewEthResolver(true).BMailBCA(cem.CryptEp.EnvelopeHead.To)
 	if toaddr != cem.CryptEp.ToAddr {
+		log.Println("to addr not equals ",toaddr,cem.CryptEp.ToAddr)
 		return false
 	}
 
@@ -81,9 +91,9 @@ func (cem *CryptEnvelopeMsg) Dispatch() error {
 
 	//save index
 	smdb := bmaildb.GetBMSendMailDb()
-	smdb.Insert(h.FromAddr.String(), size, h.Eid)
+	smdb.Insert(h.FromAddr.String(), size, h.Eid,int64(h.Date))
 	pmdb := bmaildb.GetBMPullMailDb()
-	pmdb.Insert(h.ToAddr.String(), size, h.Eid)
+	pmdb.Insert(h.ToAddr.String(), size, h.Eid,int64(h.Date))
 
 	mcdb.IncRef(h.Eid)
 	mcdb.IncRef(h.Eid)

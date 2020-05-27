@@ -12,6 +12,8 @@ import (
 	"github.com/BASChain/go-bmail-protocol/bpop"
 	"github.com/BASChain/go-bmail-resolver"
 	"github.com/google/uuid"
+	"log"
+	"github.com/btcsuite/btcutil/base58"
 )
 
 type CommandDownloadMsg struct {
@@ -38,15 +40,18 @@ func (cdm *CommandDownloadMsg) UnPack(data []byte) error {
 
 func (cdm *CommandDownloadMsg) Verify() bool {
 	if bytes.Compare(cdm.Sn, cdm.CmdSyn.SN[:]) != 0 {
+		log.Println("sn not equals ",base58.Encode(cdm.Sn),base58.Encode(cdm.CmdSyn.SN[:]))
 		return false
 	}
 
 	addr, _ := resolver.NewEthResolver(true).BMailBCA(cdm.CmdDownload.MailAddr)
 	if addr != cdm.CmdDownload.Owner {
+		log.Println("addr not equals",addr,cdm.CmdDownload.Owner)
 		return false
 	}
 
 	if !bmailcrypt.Verify(addr.ToPubKey(), cdm.CmdSyn.SN[:], cdm.CmdSyn.Sig) {
+		log.Println("verify signature failed")
 		return false
 	}
 
@@ -102,8 +107,11 @@ func (cdm *CommandDownloadMsg) Response() (WBody, error) {
 
 	total := 0
 
-	for i := len(sm.Smi) - 1; i >= 0; i-- {
-		if sm.Smi[i].CreateTime < cdm.CmdDownload.BeforeTime {
+	if cdm.CmdDownload.Direction{
+		for i := len(sm.Smi) - 1; i >= 0; i-- {
+			if sm.Smi[i].CreateTime >= cdm.CmdDownload.TimePivot {
+				continue
+			}
 			cep, err := RecoverFromFile(sm.Smi[i].Eid)
 			if err != nil {
 				continue
@@ -114,6 +122,23 @@ func (cdm *CommandDownloadMsg) Response() (WBody, error) {
 			if total >= cnt {
 				break
 			}
+		}
+	}else{
+		for i:=0;i<len(sm.Smi);i++{
+			if sm.Smi[i].CreateTime <=cdm.CmdDownload.TimePivot {
+				continue
+			}
+			cep, err := RecoverFromFile(sm.Smi[i].Eid)
+			if err != nil {
+				continue
+			}
+
+			cdm.CmdDownAck.CryptEps = append(cdm.CmdDownAck.CryptEps, *cep)
+			total++
+			if total >= cnt {
+				break
+			}
+
 		}
 	}
 

@@ -1,13 +1,11 @@
 package bmtpserver
 
 import (
-	"fmt"
 	"github.com/BASChain/go-bas-mail-server/wallet"
 	"github.com/BASChain/go-bmail-protocol/translayer"
 	"log"
 	"net"
 	"sync"
-	"time"
 )
 
 type BMTPFunc func(*TcpSession) error
@@ -45,7 +43,7 @@ func NewServer2(listenport int) BMTPServerIntf {
 	server.SupportFunc[int(translayer.BMAILVER1)] = HandleMsgV1
 	server.Session = make(map[string]*TcpSession)
 	server.quit = make(chan interface{}, 1)
-	server.timeout = 10 //second
+	server.timeout = 300 //second
 	server.wallet = wallet.GetServerWallet()
 
 	return server
@@ -140,21 +138,23 @@ func (s *BMTPServerConf) handleConnect(conn *net.TCPConn) {
 
 	s.Session[raddrstr] = ac
 
+	//conn.SetDeadline(time.Now().Add(time.Duration(s.timeout) * time.Second))
+
 	if err := ac.Negotiation(); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 	for {
-		conn.SetDeadline(time.Now().Add(time.Duration(s.timeout) * time.Second))
+		//conn.SetDeadline(time.Now().Add(time.Duration(s.timeout) * time.Second))
 		select {
 		case <-s.quit:
 			return
 		default:
 			if err := ac.Handle(ac); err != nil {
-				fmt.Println(err)
+				log.Println(err)
 				return
 			}
-			s.timeout = 30 //second
+			s.timeout = 600 //second
 		}
 	}
 }
