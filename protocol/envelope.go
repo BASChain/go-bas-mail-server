@@ -32,8 +32,7 @@ func (cem *CryptEnvelopeMsg) UnPack(data []byte) error {
 
 	cem.CryptEp = cem.EpSyn.Env.(*bmp.CryptEnvelope)
 
-	//rewrite server time in mail header
-	cem.CryptEp.EnvelopeHead.Date = time.Duration(time.Now().UnixNano() / 1e6)
+
 
 	return nil
 }
@@ -73,6 +72,9 @@ func (cem *CryptEnvelopeMsg) Dispatch() error {
 	var size int
 
 	h := &(cem.CryptEp.EnvelopeHead)
+
+	//rewrite server time in mail header
+	cem.CryptEp.EnvelopeHead.Date = time.Duration(time.Now().UnixNano() / 1e6)
 
 	//save mail
 	if data, err := json.Marshal(*cem.CryptEp); err == nil {
