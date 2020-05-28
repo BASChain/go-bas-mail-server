@@ -83,7 +83,7 @@ func (smdb *BMSaveMailDb) Insert(owner string, size int, eid uuid.UUID, curTime 
 		curTime = tools.GetNowMsTime()
 	}
 
-	smi.CreateTime = tools.GetNowMsTime()
+	smi.CreateTime = curTime
 	smi.Eid = eid
 	smi.Size = size
 
