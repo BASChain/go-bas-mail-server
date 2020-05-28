@@ -6,7 +6,6 @@ import (
 	"github.com/BASChain/go-bas-mail-server/tools"
 	"github.com/BASChain/go-bmail-protocol/bmp"
 	"github.com/BASChain/go-bmail-protocol/translayer"
-	"io"
 	"log"
 	"net"
 	"strconv"
@@ -93,24 +92,27 @@ func (ts *TcpSession) WriteMsg() error {
 
 func (ts *TcpSession) readNext() error {
 	buf := make([]byte, ts.size)
+	total := 0
 	for {
-		n, err := ts.conn.Read(buf)
-		if err != nil {
-			if opErr, ok := err.(*net.OpError); ok && opErr.Timeout() {
-				continue
-			} else if err != io.EOF {
-				log.Println("read error", err)
-				return err
-			}
+		n, err := ts.conn.Read(buf[total:])
+		if err != nil && total < ts.size {
+			//if opErr, ok := err.(*net.OpError); ok && opErr.Timeout() {
+			//	continue
+			//} else if err != io.EOF {
+			//	log.Println("read error", err)
+			//	return err
+			//}
+			return err
 		}
-		if n == 0 {
-			return errors.New("no data to read")
+		total += n
+		if total >= ts.size {
+			break
 		}
 
-		ts.buf = buf
-
-		return nil
 	}
+	ts.buf = buf
+
+	return nil
 }
 
 func (ts *TcpSession) deriveHead() (*translayer.BMTransLayer, error) {
@@ -131,6 +133,7 @@ func (ts *TcpSession) deriveHead() (*translayer.BMTransLayer, error) {
 
 func (ts *TcpSession) deriveBody() error {
 	ts.rbody = protocol.MsgGrid[ts.bmtl.GetMsgType()]
+	log.Println(string(ts.buf))
 	return ts.rbody.UnPack(ts.buf)
 }
 
