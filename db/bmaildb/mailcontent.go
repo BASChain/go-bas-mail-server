@@ -7,7 +7,6 @@ import (
 	"github.com/BASChain/go-bmail-account"
 	"github.com/google/uuid"
 	"github.com/kprc/nbsnetwork/db"
-	"github.com/kprc/nbsnetwork/tools"
 	"sync"
 )
 
@@ -53,7 +52,7 @@ func GetBMMailContentDb() *BMMailContentDB {
 	return mailContentStore
 }
 
-func (mcdb *BMMailContentDB) Insert(eid uuid.UUID, from string, fromAddr bmail.Address, to string, toAddr bmail.Address) error {
+func (mcdb *BMMailContentDB) Insert(eid uuid.UUID, from string, fromAddr bmail.Address, to string, toAddr bmail.Address, t int64) error {
 	mcdb.dbLock.Lock()
 	defer mcdb.dbLock.Unlock()
 
@@ -61,8 +60,7 @@ func (mcdb *BMMailContentDB) Insert(eid uuid.UUID, from string, fromAddr bmail.A
 		return errors.New("mail exists")
 	}
 
-	sm := &MailContentMeta{Eid: eid, From: from, FromAddr: fromAddr, To: to, ToAddr: toAddr}
-	sm.CreateTime = tools.GetNowMsTime()
+	sm := &MailContentMeta{Eid: eid, From: from, FromAddr: fromAddr, To: to, ToAddr: toAddr, CreateTime: t}
 
 	if b, err := json.Marshal(*sm); err != nil {
 		return err

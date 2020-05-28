@@ -32,8 +32,6 @@ func (cem *CryptEnvelopeMsg) UnPack(data []byte) error {
 
 	cem.CryptEp = cem.EpSyn.Env.(*bmp.CryptEnvelope)
 
-
-
 	return nil
 }
 
@@ -87,7 +85,7 @@ func (cem *CryptEnvelopeMsg) Dispatch() error {
 	//save meta
 	mcdb := bmaildb.GetBMMailContentDb()
 
-	if err := mcdb.Insert(h.Eid, h.From, h.FromAddr, h.To, h.ToAddr); err != nil {
+	if err := mcdb.Insert(h.Eid, h.From, h.FromAddr, h.To, h.ToAddr, int64(h.Date)); err != nil {
 		return err
 	}
 
