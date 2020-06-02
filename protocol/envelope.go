@@ -11,6 +11,7 @@ import (
 	"github.com/BASChain/go-bmail-protocol/bmp"
 	"github.com/BASChain/go-bmail-resolver"
 	"github.com/btcsuite/btcutil/base58"
+	"github.com/google/uuid"
 	"log"
 	"time"
 )
@@ -18,19 +19,19 @@ import (
 type CryptEnvelopeMsg struct {
 	Sn      []byte
 	EpSyn   *bmp.EnvelopeSyn
-	CryptEp *bmp.CryptEnvelope
+	CryptEp *bmp.BMailEnvelope
 	//RawEp *bmp.RawEnvelope
 	EpAck *bmp.EnvelopeAck
 }
 
 func (cem *CryptEnvelopeMsg) UnPack(data []byte) error {
 	cem.EpSyn = &bmp.EnvelopeSyn{}
-	cem.EpSyn.Env = &bmp.CryptEnvelope{}
+	cem.EpSyn.Env = &bmp.BMailEnvelope{}
 	if err := json.Unmarshal(data, cem.EpSyn); err != nil {
 		return err
 	}
 
-	cem.CryptEp = cem.EpSyn.Env.(*bmp.CryptEnvelope)
+	cem.CryptEp = cem.EpSyn.Env
 
 	return nil
 }
@@ -41,7 +42,7 @@ func (cem *CryptEnvelopeMsg) Verify() bool {
 		return false
 	}
 
-	addr, _ := resolver.NewEthResolver(true).BMailBCA(cem.CryptEp.EnvelopeHead.From)
+	addr, _ := resolver.NewEthResolver(true).BMailBCA(cem.CryptEp.FromName)
 	if addr != cem.CryptEp.FromAddr {
 		log.Println("addr not equals", addr, cem.CryptEp.FromAddr)
 		return false
@@ -49,12 +50,6 @@ func (cem *CryptEnvelopeMsg) Verify() bool {
 
 	if !bmailcrypt.Verify(addr.ToPubKey(), cem.EpSyn.SN[:], cem.EpSyn.Sig) {
 		log.Println("verify signature failed")
-		return false
-	}
-
-	toaddr, _ := resolver.NewEthResolver(true).BMailBCA(cem.CryptEp.EnvelopeHead.To)
-	if toaddr != cem.CryptEp.ToAddr {
-		log.Println("to addr not equals ", toaddr, cem.CryptEp.ToAddr)
 		return false
 	}
 
@@ -69,15 +64,14 @@ func (cem *CryptEnvelopeMsg) Dispatch() error {
 
 	var size int
 
-	h := &(cem.CryptEp.EnvelopeHead)
+	h := cem.CryptEp
 
-	//rewrite server time in mail header
-	cem.CryptEp.EnvelopeHead.Date = time.Duration(time.Now().UnixNano() / 1e6)
+	h.DateSince1970 = uint64(time.Now().UnixNano() / 1e6)
 
 	//save mail
 	if data, err := json.Marshal(*cem.CryptEp); err == nil {
 		size = len(data)
-		savefile.Save2File(h.Eid, data)
+		savefile.Save2File(uuid.MustParse(h.Eid), data)
 	} else {
 		return err
 	}
@@ -85,18 +79,23 @@ func (cem *CryptEnvelopeMsg) Dispatch() error {
 	//save meta
 	mcdb := bmaildb.GetBMMailContentDb()
 
-	if err := mcdb.Insert(h.Eid, h.From, h.FromAddr, h.To, h.ToAddr, int64(h.Date)); err != nil {
+	if err := mcdb.Insert(uuid.MustParse(h.Eid), cem.CryptEp); err != nil {
 		return err
 	}
 
 	//save index
 	smdb := bmaildb.GetBMSendMailDb()
-	smdb.Insert(h.FromAddr.String(), size, h.Eid, int64(h.Date))
+	smdb.Insert(h.FromName, size, uuid.MustParse(h.Eid), int64(h.DateSince1970))
 	pmdb := bmaildb.GetBMPullMailDb()
-	pmdb.Insert(h.ToAddr.String(), size, h.Eid, int64(h.Date))
 
-	mcdb.IncRef(h.Eid)
-	mcdb.IncRef(h.Eid)
+	for i := 0; i < len(cem.CryptEp.RCPTs); i++ {
+		rcpt := cem.CryptEp.RCPTs[i]
+		pmdb.Insert(rcpt.ToName, size, uuid.MustParse(h.Eid), int64(h.DateSince1970))
+
+	}
+
+	mcdb.IncRef(uuid.MustParse(h.Eid))
+	mcdb.IncRef(uuid.MustParse(h.Eid))
 
 	return nil
 }

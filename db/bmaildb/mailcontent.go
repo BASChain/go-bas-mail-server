@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/BASChain/go-bas-mail-server/config"
 	"github.com/BASChain/go-bmail-account"
+	"github.com/BASChain/go-bmail-protocol/bmp"
 	"github.com/google/uuid"
 	"github.com/kprc/nbsnetwork/db"
 	"sync"
@@ -22,13 +23,13 @@ var (
 )
 
 type MailContentMeta struct {
-	Eid        uuid.UUID     `json:"-"`
-	From       string        `json:"from"`
-	FromAddr   bmail.Address `json:"from_addr"`
-	To         string        `json:"to"`
-	ToAddr     bmail.Address `json:"to_addr"`
-	CreateTime int64         `json:"create_time"`
-	RefCnt     int           `json:"ref_cnt"`
+	Eid        uuid.UUID        `json:"-"`
+	From       string           `json:"from"`
+	FromAddr   bmail.Address    `json:"from_addr"`
+	RCPTs      []*bmp.Recipient `json:"rcp_ts"`
+	CreateTime int64            `json:"create_time"`
+	SessionID  string           `json:"session_id"`
+	RefCnt     int              `json:"ref_cnt"`
 }
 
 func newBMMailContentDb() *BMMailContentDB {
@@ -52,7 +53,7 @@ func GetBMMailContentDb() *BMMailContentDB {
 	return mailContentStore
 }
 
-func (mcdb *BMMailContentDB) Insert(eid uuid.UUID, from string, fromAddr bmail.Address, to string, toAddr bmail.Address, t int64) error {
+func (mcdb *BMMailContentDB) Insert(eid uuid.UUID, env *bmp.BMailEnvelope) error {
 	mcdb.dbLock.Lock()
 	defer mcdb.dbLock.Unlock()
 
@@ -60,7 +61,12 @@ func (mcdb *BMMailContentDB) Insert(eid uuid.UUID, from string, fromAddr bmail.A
 		return errors.New("mail exists")
 	}
 
-	sm := &MailContentMeta{Eid: eid, From: from, FromAddr: fromAddr, To: to, ToAddr: toAddr, CreateTime: t}
+	sm := &MailContentMeta{Eid: eid}
+	sm.From = env.FromName
+	sm.FromAddr = env.FromAddr
+	sm.RCPTs = env.RCPTs
+	sm.CreateTime = int64(env.DateSince1970)
+	sm.SessionID = env.SessionID
 
 	if b, err := json.Marshal(*sm); err != nil {
 		return err

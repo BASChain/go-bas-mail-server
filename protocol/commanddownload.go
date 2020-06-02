@@ -68,14 +68,14 @@ func (cdm *CommandDownloadMsg) Dispatch() error {
 	return nil
 }
 
-func RecoverFromFile(eid uuid.UUID) (cep *bmp.CryptEnvelope, err error) {
+func RecoverFromFile(eid uuid.UUID) (cep *bmp.BMailEnvelope, err error) {
 	data, err := savefile.ReadFromFile(eid)
 
 	if err != nil {
 		return nil, err
 	}
 
-	cep = &bmp.CryptEnvelope{}
+	cep = &bmp.BMailEnvelope{}
 	err = json.Unmarshal(data, cep)
 	if err != nil {
 		return nil, err
@@ -94,7 +94,7 @@ func (cdm *CommandDownloadMsg) Response() (WBody, error) {
 
 	copy(cdm.CmdAck.NextSN[:], tools.NewSn(tools.SerialNumberLength))
 
-	sm, err := pmdb.Find(cdm.CmdDownload.Owner.String())
+	sm, err := pmdb.Find(cdm.CmdDownload.MailAddr)
 	if err != nil {
 		cdm.CmdAck.ErrorCode = bpop.EC_No_Mail
 		return cdm.CmdAck, nil
@@ -133,7 +133,7 @@ func (cdm *CommandDownloadMsg) Response() (WBody, error) {
 				continue
 			}
 
-			cdm.CmdDownAck.CryptEps = append(cdm.CmdDownAck.CryptEps, *cep)
+			cdm.CmdDownAck.CryptEps = append(cdm.CmdDownAck.CryptEps, cep)
 			total++
 			if total >= cnt {
 				break
