@@ -117,7 +117,7 @@ func (cdm *CommandDownloadMsg) Response() (WBody, error) {
 				continue
 			}
 
-			cdm.CmdDownAck.CryptEps = append(cdm.CmdDownAck.CryptEps, *cep)
+			cdm.CmdDownAck.CryptEps = append(cdm.CmdDownAck.CryptEps, cep)
 			total++
 			if total >= cnt {
 				break

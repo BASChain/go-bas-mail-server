@@ -46,7 +46,7 @@ var (
 func (bc *BMSConfig) InitCfg() *BMSConfig {
 	bc.MgtHttpPort = 50818
 	bc.KeyPath = "/keystore"
-	bc.CmdListenPort = "127.0.0.1:59527"
+	bc.CmdListenPort = "127.0.0.1:59529"
 	bc.PKStorePath = "/pkstore"
 	bc.SSListenPort = 50021
 
