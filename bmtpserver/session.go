@@ -2,10 +2,10 @@ package bmtpserver
 
 import (
 	"errors"
-	"github.com/BASChain/go-bas-mail-server/protocol"
-	"github.com/BASChain/go-bas-mail-server/tools"
-	"github.com/BASChain/go-bmail-protocol/bmp"
-	"github.com/BASChain/go-bmail-protocol/translayer"
+	"github.com/realbmail/go-bas-mail-server/protocol"
+	"github.com/realbmail/go-bas-mail-server/tools"
+	"github.com/realbmail/go-bmail-protocol/bmp"
+	"github.com/realbmail/go-bmail-protocol/translayer"
 	"log"
 	"net"
 	"strconv"

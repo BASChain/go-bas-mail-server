@@ -1,8 +1,8 @@
 package bpopserver
 
 import (
-	"github.com/BASChain/go-bas-mail-server/bmtpserver"
-	"github.com/BASChain/go-bmail-protocol/translayer"
+	"github.com/realbmail/go-bas-mail-server/bmtpserver"
+	"github.com/realbmail/go-bmail-protocol/translayer"
 	"sync"
 )
 

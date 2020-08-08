@@ -16,8 +16,8 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/BASChain/go-bas-mail-server/app/cmdclient"
-	"github.com/BASChain/go-bas-mail-server/app/cmdcommon"
+	"github.com/realbmail/go-bas-mail-server/app/cmdclient"
+	"github.com/realbmail/go-bas-mail-server/app/cmdcommon"
 	"github.com/spf13/cobra"
 	"log"
 )

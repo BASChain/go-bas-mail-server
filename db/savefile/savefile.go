@@ -4,7 +4,7 @@ import (
 	"github.com/google/uuid"
 
 	"crypto/sha256"
-	"github.com/BASChain/go-bas-mail-server/config"
+	"github.com/realbmail/go-bas-mail-server/config"
 	"github.com/btcsuite/btcutil/base58"
 	"github.com/kprc/nbsnetwork/tools"
 	"github.com/pkg/errors"

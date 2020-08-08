@@ -8,9 +8,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/BASChain/go-bas-mail-server/app/cmdcommon"
-	"github.com/BASChain/go-bas-mail-server/app/cmdpb"
-	"github.com/BASChain/go-bas-mail-server/config"
+	"github.com/realbmail/go-bas-mail-server/app/cmdcommon"
+	"github.com/realbmail/go-bas-mail-server/app/cmdpb"
+	"github.com/realbmail/go-bas-mail-server/config"
 	"strings"
 )
 

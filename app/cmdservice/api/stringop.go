@@ -2,11 +2,11 @@ package api
 
 import (
 	"context"
-	"github.com/BASChain/go-bas-mail-server/app/cmdcommon"
-	"github.com/BASChain/go-bas-mail-server/app/cmdpb"
-	"github.com/BASChain/go-bas-mail-server/bmailcrypt"
-	"github.com/BASChain/go-bas-mail-server/config"
-	"github.com/BASChain/go-bmail-account"
+	"github.com/realbmail/go-bas-mail-server/app/cmdcommon"
+	"github.com/realbmail/go-bas-mail-server/app/cmdpb"
+	"github.com/realbmail/go-bas-mail-server/bmailcrypt"
+	"github.com/realbmail/go-bas-mail-server/config"
+	"github.com/realbmail/go-bmail-account"
 )
 
 type CmdStringOPSrv struct {

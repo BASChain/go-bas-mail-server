@@ -3,9 +3,9 @@ package bmaildb
 import (
 	"encoding/json"
 	"errors"
-	"github.com/BASChain/go-bas-mail-server/config"
-	"github.com/BASChain/go-bmail-account"
-	"github.com/BASChain/go-bmail-protocol/bmp"
+	"github.com/realbmail/go-bas-mail-server/config"
+	"github.com/realbmail/go-bmail-account"
+	"github.com/realbmail/go-bmail-protocol/bmp"
 	"github.com/google/uuid"
 	"github.com/kprc/nbsnetwork/db"
 	"sync"

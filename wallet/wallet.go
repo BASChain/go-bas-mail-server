@@ -2,9 +2,9 @@ package wallet
 
 import (
 	"crypto/ed25519"
-	"github.com/BASChain/go-bas-mail-server/bmailcrypt"
-	"github.com/BASChain/go-bas-mail-server/config"
-	"github.com/BASChain/go-bmail-account"
+	"github.com/realbmail/go-bas-mail-server/bmailcrypt"
+	"github.com/realbmail/go-bas-mail-server/config"
+	"github.com/realbmail/go-bmail-account"
 	"sync"
 )
 

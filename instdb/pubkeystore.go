@@ -1,8 +1,8 @@
 package instdb
 
 import (
-	"github.com/BASChain/go-bas-mail-server/config"
-	"github.com/BASChain/go-bas-mail-server/kvdb"
+	"github.com/realbmail/go-bas-mail-server/config"
+	"github.com/realbmail/go-bas-mail-server/kvdb"
 	"sync"
 )
 

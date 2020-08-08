@@ -17,9 +17,9 @@ package cmd
 
 import (
 	"errors"
-	"github.com/BASChain/go-bas-mail-server/app/cmdclient"
-	"github.com/BASChain/go-bas-mail-server/app/cmdcommon"
-	"github.com/BASChain/go-bas-mail-server/bmailcrypt"
+	"github.com/realbmail/go-bas-mail-server/app/cmdclient"
+	"github.com/realbmail/go-bas-mail-server/app/cmdcommon"
+	"github.com/realbmail/go-bas-mail-server/bmailcrypt"
 	"github.com/howeyc/gopass"
 	"github.com/spf13/cobra"
 	"log"

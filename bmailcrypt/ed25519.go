@@ -16,9 +16,9 @@ import (
 	"io"
 	"log"
 
-	"github.com/BASChain/go-bmail-account"
+	"github.com/realbmail/go-bmail-account"
 
-	"github.com/BASChain/go-bas-mail-server/config"
+	"github.com/realbmail/go-bas-mail-server/config"
 )
 
 type KeyJson struct {

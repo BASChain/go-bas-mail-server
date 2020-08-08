@@ -10,11 +10,11 @@ import (
 	"google.golang.org/grpc/reflection"
 	"log"
 
-	"github.com/BASChain/go-bas-mail-server/app/cmdpb"
-	"github.com/BASChain/go-bas-mail-server/app/cmdservice/api"
-	"github.com/BASChain/go-bas-mail-server/bmtpserver"
-	"github.com/BASChain/go-bas-mail-server/bpopserver"
-	"github.com/BASChain/go-bas-mail-server/config"
+	"github.com/realbmail/go-bas-mail-server/app/cmdpb"
+	"github.com/realbmail/go-bas-mail-server/app/cmdservice/api"
+	"github.com/realbmail/go-bas-mail-server/bmtpserver"
+	"github.com/realbmail/go-bas-mail-server/bpopserver"
+	"github.com/realbmail/go-bas-mail-server/config"
 )
 
 type cmdServer struct {

@@ -1,8 +1,8 @@
 package bmtpserver
 
 import (
-	"github.com/BASChain/go-bas-mail-server/wallet"
-	"github.com/BASChain/go-bmail-protocol/translayer"
+	"github.com/realbmail/go-bas-mail-server/wallet"
+	"github.com/realbmail/go-bmail-protocol/translayer"
 	"log"
 	"net"
 	"sync"

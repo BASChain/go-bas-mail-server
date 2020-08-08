@@ -15,7 +15,7 @@
 package main
 
 import (
-	"github.com/BASChain/go-bas-mail-server/app/cmd"
+	"github.com/realbmail/go-bas-mail-server/app/cmd"
 )
 
 var (
