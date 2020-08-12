@@ -16,6 +16,9 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/realbmail/go-bas-mail-server/bmailcrypt"
+	"github.com/realbmail/go-bas-mail-server/bmtpserver"
+	"github.com/realbmail/go-bas-mail-server/bpopserver"
 	"os"
 
 	"github.com/realbmail/go-bas-mail-server/app/cmdcommon"
@@ -49,7 +52,28 @@ var rootCmd = &cobra.Command{
 		cfg := config.GetBMSCfg()
 		cfg.Save()
 
-		//go bmtpserver.GetBMTPServer().StartTCPServer()
+		if keypassword == "" {
+			if keypassword, err = inputpassword(); err != nil {
+				log.Println(err)
+				return
+			}
+		}
+
+		if !bmailcrypt.KeyIsGenerated() {
+			err := bmailcrypt.GenEd25519KeyAndSave(keypassword)
+			if err != nil {
+				log.Println("create account failed")
+				return
+			}
+
+			bmailcrypt.LoadKey(keypassword)
+
+		} else {
+			bmailcrypt.LoadKey(keypassword)
+		}
+
+		go bmtpserver.GetBMTPServer().StartTCPServer()
+		go bpopserver.GetBMTPServer().StartTCPServer()
 
 		cmdservice.GetCmdServerInst().StartCmdService()
 	},

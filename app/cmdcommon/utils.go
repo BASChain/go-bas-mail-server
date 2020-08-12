@@ -2,8 +2,8 @@ package cmdcommon
 
 import (
 	"errors"
-	"github.com/realbmail/go-bas-mail-server/config"
 	"github.com/kprc/nbsnetwork/tools"
+	"github.com/realbmail/go-bas-mail-server/config"
 )
 
 func IsProcessCanStarted() (bool, error) {

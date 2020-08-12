@@ -3,10 +3,10 @@ package protocol
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/mr-tron/base58"
 	"github.com/realbmail/go-bas-mail-server/bmailcrypt"
 	"github.com/realbmail/go-bmail-protocol/bpop"
 	"github.com/realbmail/go-bmail-resolver"
-	"github.com/mr-tron/base58"
 	"log"
 )
 

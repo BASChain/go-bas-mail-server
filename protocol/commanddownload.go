@@ -3,6 +3,8 @@ package protocol
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/btcsuite/btcutil/base58"
+	"github.com/google/uuid"
 	"github.com/realbmail/go-bas-mail-server/bmailcrypt"
 	"github.com/realbmail/go-bas-mail-server/db/bmaildb"
 	"github.com/realbmail/go-bas-mail-server/db/savefile"
@@ -11,8 +13,6 @@ import (
 	"github.com/realbmail/go-bmail-protocol/bmp"
 	"github.com/realbmail/go-bmail-protocol/bpop"
 	"github.com/realbmail/go-bmail-resolver"
-	"github.com/btcsuite/btcutil/base58"
-	"github.com/google/uuid"
 	"log"
 )
 

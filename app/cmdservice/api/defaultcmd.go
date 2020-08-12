@@ -11,11 +11,7 @@ import (
 
 	"github.com/realbmail/go-bas-mail-server/app/cmdcommon"
 	"github.com/realbmail/go-bas-mail-server/app/cmdpb"
-	"github.com/realbmail/go-bas-mail-server/bmtpserver"
-	"github.com/realbmail/go-bas-mail-server/bpopserver"
 	"github.com/realbmail/go-bmail-account"
-	"github.com/realbmail/go-bmail-protocol/translayer"
-	"strconv"
 	"sync"
 )
 
@@ -37,9 +33,9 @@ func (cds *CmdDefaultServer) DefaultCmdDo(ctx context.Context,
 		return cds.showAccout()
 	}
 
-	if request.Reqid == cmdcommon.CMD_RUN {
-		return cds.serverRun()
-	}
+	//if request.Reqid == cmdcommon.CMD_RUN {
+	//	return cds.serverRun()
+	//}
 
 	resp := &cmdpb.DefaultResp{}
 
@@ -88,26 +84,26 @@ var (
 	runningOnceLock sync.Mutex
 )
 
-func (cds *CmdDefaultServer) serverRun() (*cmdpb.DefaultResp, error) {
-
-	if config.GetBMSCfg().PubKey == nil || config.GetBMSCfg().PrivKey == nil {
-		return encapResp("bmtp need account"), nil
-	}
-
-	if !runingFlag {
-		runningOnceLock.Lock()
-		defer runningOnceLock.Unlock()
-		if !runingFlag {
-			go bmtpserver.GetBMTPServer().StartTCPServer()
-			go bpopserver.GetBMTPServer().StartTCPServer()
-		}
-
-		runingFlag = true
-	}
-
-	msg := "bmtp server start at: " + strconv.Itoa(int(translayer.BMTP_PORT))
-	msg += "\r\nbpop server start at: " + strconv.Itoa(int(translayer.BPOP3))
-
-	return encapResp(msg), nil
-
-}
+//func (cds *CmdDefaultServer) serverRun() (*cmdpb.DefaultResp, error) {
+//
+//	if config.GetBMSCfg().PubKey == nil || config.GetBMSCfg().PrivKey == nil {
+//		return encapResp("bmtp need account"), nil
+//	}
+//
+//	if !runingFlag {
+//		runningOnceLock.Lock()
+//		defer runningOnceLock.Unlock()
+//		if !runingFlag {
+//			go bmtpserver.GetBMTPServer().StartTCPServer()
+//			go bpopserver.GetBMTPServer().StartTCPServer()
+//		}
+//
+//		runingFlag = true
+//	}
+//
+//	msg := "bmtp server start at: " + strconv.Itoa(int(translayer.BMTP_PORT))
+//	msg += "\r\nbpop server start at: " + strconv.Itoa(int(translayer.BPOP3))
+//
+//	return encapResp(msg), nil
+//
+//}
