@@ -1,8 +1,8 @@
 package bmaildb
 
 import (
-	"github.com/realbmail/go-bas-mail-server/config"
 	"github.com/kprc/nbsnetwork/db"
+	"github.com/realbmail/go-bas-mail-server/config"
 	"sync"
 )
 

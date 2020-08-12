@@ -2,10 +2,10 @@ package instdb
 
 import (
 	"crypto/rand"
-	"github.com/realbmail/go-bas-mail-server/kvdb"
 	"github.com/btcsuite/btcutil/base58"
 	"github.com/kprc/nbsnetwork/tools"
 	"github.com/pkg/errors"
+	"github.com/realbmail/go-bas-mail-server/kvdb"
 	"sync"
 	"time"
 )

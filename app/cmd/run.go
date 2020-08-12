@@ -18,6 +18,7 @@ package cmd
 import (
 	"github.com/realbmail/go-bas-mail-server/app/cmdclient"
 	"github.com/realbmail/go-bas-mail-server/app/cmdcommon"
+	"github.com/realbmail/go-bas-mail-server/bmailcrypt"
 	"github.com/spf13/cobra"
 	"log"
 )
@@ -33,7 +34,21 @@ var runCmd = &cobra.Command{
 			return
 		}
 
-		cmdclient.DefaultCmdSend("", cmdcommon.CMD_RUN)
+		if !bmailcrypt.KeyIsGenerated() {
+			log.Println("please create account first")
+			return
+		}
+
+		var err error
+
+		if keypassword == "" {
+			if keypassword, err = inputpassword(); err != nil {
+				log.Println(err)
+				return
+			}
+		}
+
+		cmdclient.StringOpCmdSend("", cmdcommon.CMD_RUN, keypassword)
 	},
 }
 
